@@ -2,9 +2,9 @@
 
 This is the reference implementation of the algorithm presented in
 
-Seybold, H. & Hilfer, R. (2008). Numerical Algorithm for Calculating the Generalized Mittag-Leffler Function SIAM Journal on Numerical Analysis, 47(1), 69–88. [link](https://doi.org/10.1137/070700280),
+> [Seybold, H. and Hilfer, R. _Numerical Algorithm for Calculating the Generalized Mittag-Leffler Function_, SIAM Journal on Numerical Analysis, 47(1), 69–88 (2008)](https://doi.org/10.1137/070700280)
 
-for computing the Mittag-Leffler function. It should be used for debugging purposes only.
+for computing the Mittag-Leffler function.
 
 ## Install
 
