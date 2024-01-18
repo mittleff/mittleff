@@ -94,12 +94,21 @@ def test_siam_15():
     assert(isclose(computed, expected))
 
 def test_siam_16():
+    """
+    Obs: the expected value in the paper was typed incorrectly
+    """
+    alpha, beta, z = 0.6, -0.8, -50
+    expected = 0.00751163297262774
+    computed = mittleff(alpha, beta, z, acc)
+    assert(isclose(computed, expected))
+
+def test_siam_17():
     alpha, beta, z = 0.6, -0.8, -2.16311896062463+6.65739561406608j
     expected = 0.0193182614473201+0.0537209282676945j
     computed = mittleff(alpha, beta, z, acc)
     assert(isclose(computed, expected))
 
-def test_siam_17():
+def test_siam_18():
     alpha, beta, z = 0.6, -0.8, -6.18033988749895+19.0211303259031j
     expected = 0.00592228306634142+0.0179734030934208j
     computed = mittleff(alpha, beta, z, acc)
