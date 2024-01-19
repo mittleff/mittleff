@@ -7,7 +7,9 @@ from .algorithm import mittleff0, mittleff1, mittleff2, mittleff3, mittleff4, mi
 logger = logging.getLogger(__name__)
 
 def __mittleff(alpha: mp.mpf, beta: mp.mpf, z: mp.mpc, acc: mp.mpf) -> mp.mpc:    
-    if in_region_G0(z):
+    if eq(z, 0):
+        res = mp.rgamma(beta)
+    elif in_region_G0(z):
         # Apply Taylor series, eq. (2.1)
         logger.debug(f"{z} in region G_0")
         res = mittleff0(alpha, beta, z, acc)
