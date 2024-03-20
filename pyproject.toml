@@ -1,0 +1,13 @@
+[tool.poetry]
+name = "mittleff"
+version = "0.1.0"
+description = "Computing the generalized Mittag-Leffler function"
+authors = ["Victor Santos <victor_santos@fisica.ufc.br>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
