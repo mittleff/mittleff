@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.9"
 python-flint = "^0.6.0"
+pytest = "^8.1.1"
 
 [build-system]
 requires = ["poetry-core"]
