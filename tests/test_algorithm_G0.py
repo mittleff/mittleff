@@ -1,7 +1,7 @@
 import pytest
 import flint
 from flint import arb, acb
-from mittleff import _Taylor
+from mittleff.algorithm import mittleff0
 from cmath import isclose
  
 def expected(z: complex) -> complex:
@@ -24,7 +24,7 @@ def test_Taylor(z):
     α, β = arb("0.5"), arb("1.0")
     x = flint.acb(z.real, z.imag)
     ε = flint.arb("1e-15")
-    computed = complex(_Taylor(α, β, x, ε))
+    computed = complex(mittleff0(α, β, x, ε))
     assert(isclose(expected(z), computed))
 
 
