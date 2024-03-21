@@ -2,11 +2,11 @@ import flint
 from flint import arb, acb
 
 def MittLeff(α: float, β: float, z: complex, ε: float = 1e-15) -> complex:
-    return complex(_ML(acb(z.real, z.imag), arb(α), arb(β), arb(ε)))
+    return complex(_ML(arb(α), arb(β), acb(z.real, z.imag), arb(ε)))
 
 def _ML(α: arb, β: arb, z: acb, ε: arb) -> acb:
     π = flint.arb.pi()
-    r1 = arb(0.9) # Taylor series upper limit
+    r1 = arb("0.95") # Taylor series upper limit
     δ = π * α / 10.0 # Stokes line region        
     if z.abs_lower() < r1:
         # Evaluate the Taylor Series
@@ -32,10 +32,30 @@ def _Taylor(α: arb, β: arb, z: acb, ε: arb) -> acb:
     k2 = arb.ceil(arb.log(ε * (one - absz))/arb.log(absz)) + one
     kmax = int(float(arb.mid(arb.max(k1, k2))))
 
-    return sum([arb.rgamma(α * k + β) * z.pow(k) for k in range(kmax+1)])
+    return sum([arb.rgamma(α * k + β) * z.pow(k) for k in range(kmax + 1)])
 
 def _Recursion(α: arb, β: arb, z: acb, ε: arb) -> acb: return acb(0)
-def _Asymptotics(α: arb, β: arb, z: acb, ε: arb) -> acb: return acb(0)
+
+
+def _asy(α: arb, β: arb, z: acb, ε: arb) -> acb:
+    one = arb("1")
+    absz = acb.abs_lower(z)
+    
+    kmax = int(float(arb.mid(arb.ceil((one/α) * absz**(one/α)) + one)))
+
+    return sum([arb.rgamma(-α * k + β) * z.pow(-k) for k in range(1, kmax + 1)])
+
+def _Asymptotics(α: arb, β: arb, z: acb, ε: arb) -> acb:
+    one = arb("1")
+    π = flint.arb.pi()
+    δ = π * α / 8.0
+    phi1, phi2 = -π * α + δ, π * α - δ
+    
+    argz = acb.arg(z)
+    if argz >= phi1 and argz <= phi2: # Region G1
+        return (one/α) * z.pow(one - β) * acb.exp(z.pow(one/α)) - _asy(α, β, z, ε)
+    return 1
+
 def _IntegralRep(α: arb, β: arb, z: acb, ε: arb) -> acb: return acb(0)
 
 def _compute_r2(α: arb,  ε: arb) -> arb:
