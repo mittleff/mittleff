@@ -4,7 +4,8 @@ from .partition import in_region_G0
 from .algorithm import taylor_series
 
 def MittLeff(α: float, β: float, z: complex, ε: float = 1e-15) -> complex:
-    return complex(_ML(arb(α), arb(β), acb(z), arb(ε)))
+    α, β, z, ε = arb(α), arb(β), acb(z), arb(ε)
+    return complex(_ML(α, β, z, ε))
 
 def _MittLeff(α: arb, β: arb, z: acb, ε: arb) -> acb:
     if in_region_G0(z, α, ε):

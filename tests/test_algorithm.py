@@ -2,7 +2,7 @@ import pytest
 import flint
 from flint import arb, acb
 from cmath import isclose
-from mittleff.algorithm import mittleff0, mittleff1, mittleff2, mittleff3, mittleff4, mittleff5, mittleff6
+from mittleff.algorithm import taylor_series, mittleff1, mittleff2, mittleff3, mittleff4, mittleff5, mittleff6
 
 def expected(z: complex) -> complex:
     x = acb(z)
@@ -23,7 +23,7 @@ def expected(z: complex) -> complex:
     ])
 def test_mittleff0(z):
     α, β, z, ε = arb("0.5"), arb("1.0"), acb(z), arb("1e-15")
-    computed = mittleff0(α, β, z, ε)
+    computed = taylor_series(α, β, z, ε)
     assert(isclose(expected(z), computed))
 
 @pytest.mark.parametrize("z", [
