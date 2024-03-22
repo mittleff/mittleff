@@ -9,6 +9,11 @@ def expected(z: complex) -> complex:
     ret = acb.exp(x * x) * acb.erfc(-x)
     return complex(ret)
 
+def expected_beta_large(z: complex) -> complex:
+    x = acb(z)
+    ret = (1/x) * (acb.exp(x * x) * acb.erfc(-x) - 1)
+    return complex(ret)
+
 @pytest.mark.parametrize("z", [
     -7.33057219e-02-5.11934762e-01j,
     -2.71670473e-01-3.61159944e-01j,
@@ -127,3 +132,20 @@ def test_mittleff6(z):
     α, β, z, ε = arb("0.5"), arb("1.0"), acb(z), arb("1e-15")
     computed = mittleff6(α, β, z, ε)
     assert(isclose(expected(z), computed))
+
+@pytest.mark.parametrize("z", [
+    -5.00775165e+00+4.08876443e+00j,
+    +1.29206756e+00+6.06330787e+00j,
+    -3.61542114e+00-6.31484347e+00j,
+    -4.41578509e+00+6.29748333e+00j,
+    -1.98160394e+00+2.44111893e+00j,
+    -8.53012232e-02+7.19321871e+00j,
+    -7.28144099e+00-2.17268099e+00j,
+    -6.56039361e+00+4.33423743e+00j,
+    -3.85833401e+00-4.25315083e+00j,
+    -2.97631495e+00+6.48320798e+00j,
+    ])
+def test_mittleff6_beta_large(z):
+    α, β, z, ε = arb("0.5"), arb("1.5"), acb(z), arb("1e-15")
+    computed = mittleff6(α, β, z, ε)
+    assert(isclose(expected_beta_large(z), computed))    

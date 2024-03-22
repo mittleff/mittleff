@@ -149,13 +149,16 @@ def B(r: acb, α: arb, β: arb, z: acb, φ: arb) -> acb:
     den = r**2 - 2.0 * r * z * arb.cos(φ) + z**2
     return (1.0/π) * A(r, α, β, φ) * (num/den)
 
-def C(varphi, alpha, beta, z, varrho):
+def C(φ: acb, α: arb, β: arb, z: acb, ρ: arb):
     """
     Equation (4.29)
     """
-    num = cos(omega(varrho, varphi, alpha, beta)) + 1j * sin(omega(varrho, varphi, alpha, beta))
-    den = varrho * (cos(varphi) + 1j * sin(varphi)) - z
-    return (varrho/(2.0 * pi)) * A(varrho, alpha, beta, varphi) * (num/den)
+    π = flint.arb.pi()
+    J = acb(0+1j)
+    ω = omega(acb(ρ), φ, α, β)
+    num = acb.cos(ω) + J * acb.sin(ω)
+    den = ρ * (acb.cos(φ) + J * acb.sin(φ)) - z
+    return (ρ/(2.0 * π)) * A(acb(ρ), α, β, φ.real) * (num/den)
 
 
 def _Recursion(α: arb, β: arb, z: acb, ε: arb) -> acb: return acb(0)
