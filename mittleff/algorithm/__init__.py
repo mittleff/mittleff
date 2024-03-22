@@ -1,27 +1,17 @@
 import flint
 from flint import arb, acb
+from ..partition import _compute_r1, in_region_G1, in_region_G2, in_region_G3, in_region_G4, in_region_G5, in_region_G6
 
 ######################
 # External functions #
 ######################
-def taylor_series(α: arb, β: arb, z: acb, ε: arb) -> acb:
-    one, two = arb("1"), arb("2")
-    absz = acb.abs_lower(z)
-    
-    k1 = arb.ceil((two - arb.abs_lower(β))/α) + one
-    k2 = arb.ceil(arb.log(ε * (one - absz))/arb.log(absz)) + one
-    kmax = int(float(arb.mid(arb.max(k1, k2))))
+def mittleff0(α: arb, β: arb, z: acb, ε: arb) -> acb:   
+    return taylor_series(α, β, z, ε)
 
-    return sum([arb.rgamma(α * k + β) * z.pow(k) for k in range(kmax + 1)])
-
-def mittleff1(α: arb, β: arb, z: acb, ε: arb) -> acb:
-    # one = arb("1")
-    # fac = (one/α) * z.pow((one-β)/α) * acb.exp(z.pow(one/α))
-    # return fac - asymptotic_series(α, β, z, ε)
+def mittleff1(α: arb, β: arb, z: acb, ε: arb) -> acb:    
     return asymptotic_series(α, β, z, ε, 1)
 
 def mittleff2(α: arb, β: arb, z: acb, ε: arb) -> acb:
-    #return -asymptotic_series(α, β, z, ε)
     return asymptotic_series(α, β, z, ε, 2)
 
 def mittleff3(α: arb, β: arb, z: acb, ε: arb) -> acb:
@@ -47,6 +37,16 @@ def mittleff6(α: arb, β: arb, z: acb, ε: arb) -> acb:
 ######################
 # Internal functions #
 ######################
+def taylor_series (α: arb, β: arb, z: acb, ε: arb) -> acb:
+    one, two = arb("1"), arb("2")
+    absz = acb.abs_lower(z)
+    
+    k1 = arb.ceil((two - arb.abs_lower(β))/α) + one
+    k2 = arb.ceil(arb.log(ε * (one - absz))/arb.log(absz)) + one
+    kmax = int(float(arb.mid(arb.max(k1, k2))))
+
+    return sum([arb.rgamma(α * k + β) * z.pow(k) for k in range(kmax + 1)])
+
 def asymptotic_series(α: arb, β: arb, z: acb, ε: arb, region: int) -> acb:
     one = arb("1")
     absz = acb.abs_lower(z)
@@ -72,7 +72,6 @@ def _lambda(region: int, α: arb, β: arb, z: acb) -> acb:
         f3 = acb.erfc(c * arb.sqrt(f4))
         res = (one/(two * α)) * f1 * f2 * f3
     return res
-
 
 def _compute_rmax(α: arb, β: arb, z: acb, ε: arb) -> arb:
     π = flint.arb.pi()
