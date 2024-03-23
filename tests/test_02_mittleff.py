@@ -3,6 +3,8 @@ from flint import acb, arb
 from cmath import isclose
 from mittleff import mittleff
 
+ε = arb(1e-15)
+
 @pytest.mark.parametrize("α, β, z", [
     (1.0, 1.0, +8.00000000000000e-01+0.00000000000000e+00j),
     (1.0, 1.0, +2.00000000000000e+00+0.00000000000000e+00j),
@@ -13,8 +15,9 @@ def test_exp(α, β, z):
     '''
     $E_{1, 1}(z) = \exp(z)$
     '''
-    expected = complex(acb.exp(acb(z)))
-    computed = mittleff(α, β, z, 1e-15)
+    α, β, z = arb(α), arb(β), acb(z)
+    expected = complex(acb.exp(z))
+    computed = mittleff(α, β, z, ε)
     assert(isclose(expected, computed))
 
 @pytest.mark.parametrize("α, β, z", [
@@ -28,8 +31,9 @@ def test_cos(α, β, z):
     '''
     $E_{2, 1}(z) = \cosh(\sqrt{z})$
     '''
-    expected = complex(acb.cosh(acb.sqrt(acb(z))))
-    computed = mittleff(α, β, z, 1e-15)
+    α, β, z = arb(α), arb(β), acb(z)
+    expected = complex(acb.cosh(acb.sqrt(z)))
+    computed = mittleff(α, β, z, ε)
     assert(isclose(expected, computed))
 
 @pytest.mark.parametrize("α, β, z", [
@@ -43,8 +47,9 @@ def test_sin(α, β, z):
     '''
     $E_{2, 2}(z) = \mathrm{sinh}\sqrt{z}/\sqrt{z}}$
     '''
-    expected = complex(acb.sinh(acb.sqrt(acb(z)))/acb.sqrt(acb(z)))
-    computed = mittleff(α, β, z, 1e-15)
+    α, β, z = arb(α), arb(β), acb(z)
+    expected = complex(acb.sinh(acb.sqrt(z))/acb.sqrt(z))
+    computed = mittleff(α, β, z, ε)
     assert(isclose(expected, computed))
 
 @pytest.mark.parametrize("α, β, z", [
@@ -60,8 +65,9 @@ def test_erfc(α, β, z):
     '''
     $E_{1/2, 1}(z) = e^{z^2}\mathrm{erfc}(-z)$
     '''
-    expected = complex(acb.exp(acb(z)**2) * acb.erfc(-acb(z)))
-    computed = mittleff(α, β, z, 1e-15)
+    α, β, z = arb(α), arb(β), acb(z)
+    expected = complex(acb.exp(z**2) * acb.erfc(-z))
+    computed = mittleff(α, β, z, ε)
     assert(isclose(expected, computed))
 
 # @pytest.mark.parametrize("α, β, z", [
@@ -77,8 +83,8 @@ def test_erfc(α, β, z):
 #     '''
 #     $E_{1/2, 1/2}(-z) = -z\,e^{z^2}\mathrm{erfc}(z)$
 #     '''
-#     expected = complex(-acb(z) * acb.exp(acb(z)**2) * acb.erfc(acb(z)))
-#     computed = mittleff(α, β, z, 1e-15)
+#     expected = complex(-z * acb.exp(z**2) * acb.erfc(z))
+#     computed = mittleff(α, β, z, ε)
 #     assert(isclose(expected, computed))
 
 
@@ -106,7 +112,8 @@ def test_siam(α, β, z, expected):
     '''
     Tests for compare with table from the paper
     '''
-    computed = mittleff(α, β, z, 1e-15)
+    α, β, z = arb(α), arb(β), acb(z)
+    computed = mittleff(α, β, z, ε)
     assert(isclose(expected, computed))
 
 
@@ -126,5 +133,6 @@ def test_misc(α, β, z, expected):
     '''
     from https://github.com/JuliaMath/MittagLeffler.jl
     '''
-    computed = mittleff(α, β, z, 1e-15)
+    α, β, z = arb(α), arb(β), acb(z)
+    computed = mittleff(α, β, z, ε)
     assert(isclose(expected, computed))

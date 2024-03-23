@@ -3,11 +3,7 @@ from flint import arb, acb
 from .partition import in_region_G0, in_region_G1, in_region_G2, in_region_G3, in_region_G4, in_region_G5, in_region_G6
 from .algorithm import mittleff0, mittleff1, mittleff2, mittleff3, mittleff4, mittleff5, mittleff6
 
-def mittleff(α: float, β: float, z: complex, ε: float = 1e-15) -> complex:
-    α, β, z, ε = arb(α), arb(β), acb(z), arb(ε)
-    return complex(_mittleff(α, β, z, ε))
-
-def _mittleff(α: arb, β: arb, z: acb, ε: arb) -> acb:
+def mittleff(α: arb, β: arb, z: acb, ε: arb) -> acb:
     print(α, β, z, ε)
     if in_region_G0(z, α, ε):
         ################################
@@ -30,7 +26,7 @@ def _mittleff(α: arb, β: arb, z: acb, ε: arb) -> acb:
             for h in range(0, m):
                 zp = z.pow(one / m) * acb.exp(two * π * J * h / m)
                 print(f"h = {h}", _mittleff(a, β, zp, ε))
-                s += _mittleff(a, β, zp, ε)
+                s += mittleff(a, β, zp, ε)
             s = (one/m) * s
             #print('s = ', s)
             return s
