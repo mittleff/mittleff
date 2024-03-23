@@ -1,10 +1,12 @@
 import flint
 from flint import arb, acb
 from ..partition import _compute_r1, in_region_G1, in_region_G2, in_region_G3, in_region_G4, in_region_G5, in_region_G6
+#from mittleff import _mittleff
 
 ######################
 # External functions #
 ######################
+
 def mittleff0(α: arb, β: arb, z: acb, ε: arb) -> acb:   
     return taylor_series(α, β, z, ε)
 
@@ -105,7 +107,7 @@ def _mittleff5_6 (α: arb, β: arb, z: acb, ε: arb, c1: arb, c2: arb) -> acb:
     rmax = _compute_rmax(α, β, z, ε)
     aux = c2 * A(z, α, β, zero)
     integ = zero
-    if β <= one:        
+    if β <= one:
         integ = quadb(α, β, z, c1, zero, rmax, ε)
     else:
         int1 = quadb(α, β, z, c1, half, (one + c2) * rmax, ε)
@@ -120,13 +122,12 @@ def quadc(α: arb, β: arb, z: acb, ρ: arb, a: arb, b: arb, ε: arb):
     return numerical_integral(lambda φ: C(φ, α, β, z, ρ), a, b, ε)    
 
 def numerical_integral(func, a, b, acc = 1e-12):
-    return acb.integral(lambda x, _: func(x), a, b)
+    return acb.integral(lambda x, _: func(x), a, b, verbose = None)
 
 def omega(x: acb, y: acb, α: arb, β: arb) -> acb:
     """
     Equation (4.30)
-    """
-    #α, β = acb(α), acb(β)
+    """    
     one = arb("1")
     res = x.pow(one/α) * acb.sin(y/α) + y * (one + (one - β)/α)
     return res
@@ -136,6 +137,9 @@ def A(z: acb, α: arb, β: arb, x: arb) -> acb:
     Equation (4.27)
     """
     one = arb("1")
+    # print('computing A(z, α, β, x) for (z, α, β, x) = ', z, α, β, x)
+    # print('z, z**(one/α) = ', z, z**(one/α))
+    # print('')
     return (one/α) * z.pow((one - β)/α) * acb.exp(z.pow(one/α) * arb.cos(x/α))
 
 def B(r: acb, α: arb, β: arb, z: acb, φ: arb) -> acb:
@@ -146,6 +150,7 @@ def B(r: acb, α: arb, β: arb, z: acb, φ: arb) -> acb:
     ω = omega(r, acb(φ), α, β)
     num = r * acb.sin(ω - φ) - z * acb.sin(ω)
     den = r**2 - 2.0 * r * z * arb.cos(φ) + z**2
+    #print('aa', (1.0/π) * A(r, α, β, φ) * (num/den))
     return (1.0/π) * A(r, α, β, φ) * (num/den)
 
 def C(φ: acb, α: arb, β: arb, z: acb, ρ: arb):
@@ -158,12 +163,5 @@ def C(φ: acb, α: arb, β: arb, z: acb, ρ: arb):
     num = acb.cos(ω) + J * acb.sin(ω)
     den = ρ * (acb.cos(φ) + J * acb.sin(φ)) - z
     return (ρ/(2.0 * π)) * A(acb(ρ), α, β, φ.real) * (num/den)
-
-
-def _Recursion(α: arb, β: arb, z: acb, ε: arb) -> acb: return acb(0)
-
-def _MainAlgorithm(α: arb, β: arb, z: acb, ε: arb) -> acb: return acb(0)
-
-def _IntegralRep(α: arb, β: arb, z: acb, ε: arb) -> acb: return acb(0)
 
 
