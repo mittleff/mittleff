@@ -3,10 +3,11 @@ import flint
 from flint import arb, acb
 from .partition import in_region_G0, in_region_G1, in_region_G2, in_region_G3, in_region_G4, in_region_G5, in_region_G6
 from .algorithm import mittleff0, mittleff1, mittleff2, mittleff3, mittleff4, mittleff5, mittleff6
+#from math import fabs, floor, log
 
 logger = logging.getLogger(__name__)
 
-def mittleff(α: arb, β: arb, z: acb, ε: arb) -> acb:
+def mittleff(α: arb, β: arb, z: acb, ε: arb = None, prec: int = 53) -> acb:
     logger.info(f'''
 ######################################################################
 # Parameters:
@@ -16,7 +17,13 @@ def mittleff(α: arb, β: arb, z: acb, ε: arb) -> acb:
 #   ε = {ε}
 ######################################################################
 ''')
-    if in_region_G0(z, α, ε):
+    #prec = 53          # real/complex precision (in bits)
+    #dps = 15           # real/complex precision (in digits)
+
+    flint.ctx.prec = prec
+    #dps = int(fabs(floor(log(2**prec)/log(10)))) - 1
+    
+    if in_region_G0(z, α):
         ################################
         # Evaluate using Taylor series #
         ################################
@@ -59,22 +66,22 @@ def mittleff(α: arb, β: arb, z: acb, ε: arb) -> acb:
             #     s += _mittleff(a, β, zp, ε)                
             # return one/(two*m + one) * s
         else:
-            if in_region_G1(z, α, ε):
+            if in_region_G1(z, α):
                 logger.info(f"\n{z} ∈ G_1")
                 return mittleff1(α, β, z, ε)
-            elif in_region_G2(z, α, ε):
+            elif in_region_G2(z, α):
                 logger.info(f"\n{z} ∈ G_2")
                 return mittleff2(α, β, z, ε)
-            elif in_region_G3(z, α, ε):
+            elif in_region_G3(z, α):
                 logger.info(f"\n{z} ∈ G_3")
                 return mittleff3(α, β, z, ε)
-            elif in_region_G4(z, α, ε):
+            elif in_region_G4(z, α):
                 logger.info(f"\n{z} ∈ G_4")
                 return mittleff4(α, β, z, ε)
-            elif in_region_G5(z, α, ε):
+            elif in_region_G5(z, α):
                 logger.info(f"\n{z} ∈ G_5")
                 return mittleff5(α, β, z, ε)
-            elif in_region_G6(z, α, ε):
+            elif in_region_G6(z, α):
                 logger.info(f"\n{z} ∈ G_6")
                 return mittleff6(α, β, z, ε)
             else:

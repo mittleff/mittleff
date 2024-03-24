@@ -2,7 +2,7 @@ import pytest
 from mittleff.partition import in_region_G0, in_region_G1, in_region_G2, in_region_G3, in_region_G4, in_region_G5, in_region_G6
 from flint import arb, acb
 
-α, ε = arb("0.5"), arb("1.0e-15")
+α = arb("0.5")
 
 @pytest.mark.parametrize("z", [
     -7.33057219e-02-5.11934762e-01j,
@@ -17,7 +17,7 @@ from flint import arb, acb
     +1.59189786e-01+3.86077993e-02j
     ])
 def test_in_region_G0(z):
-    assert(in_region_G0(acb(z), α, ε))
+    assert(in_region_G0(acb(z), α))
 
 @pytest.mark.parametrize("z", [
     +1.00809273e+01+2.22251668e+00j,
@@ -32,7 +32,7 @@ def test_in_region_G0(z):
     +5.72222055e+00+5.86522403e+00j
     ])
 def test_in_region_G1(z):
-    assert(in_region_G1(acb(z), α, ε))
+    assert(in_region_G1(acb(z), α))
 
 @pytest.mark.parametrize("z", [
     -8.81638303e+00+4.53794350e+00j,
@@ -47,7 +47,7 @@ def test_in_region_G1(z):
     -7.05943454e+00+7.46849452e+00j
     ])
 def test_in_region_G2(z):
-    assert(in_region_G2(acb(z), α, ε))
+    assert(in_region_G2(acb(z), α))
 
 @pytest.mark.parametrize("z", [
     -3.22342758e-01+8.45119872e+00j,
@@ -62,7 +62,7 @@ def test_in_region_G2(z):
     +1.13040766e+00+9.12078090e+00j
     ])
 def test_in_region_G3(z):
-    assert(in_region_G3(acb(z), α, ε))
+    assert(in_region_G3(acb(z), α))
 
 @pytest.mark.parametrize("z", [
     -3.75588680e-01-9.83203507e+00j,
@@ -77,7 +77,7 @@ def test_in_region_G3(z):
     -1.52222011e+00-9.69011955e+00j
     ])
 def test_in_region_G4(z):
-    assert(in_region_G4(acb(z), α, ε))
+    assert(in_region_G4(acb(z), α))
 
 @pytest.mark.parametrize("z", [
     +4.08373780e+00+2.53485316e+00j,
@@ -92,7 +92,7 @@ def test_in_region_G4(z):
     +2.03837467e+00-3.27614785e+00j,
     ])
 def test_in_region_G5(z):
-    assert(in_region_G5(acb(z), α, ε))
+    assert(in_region_G5(acb(z), α))
 
 @pytest.mark.parametrize("z", [
     -5.00775165e+00+4.08876443e+00j,
@@ -107,4 +107,4 @@ def test_in_region_G5(z):
     -2.97631495e+00+6.48320798e+00j,
     ])
 def test_in_region_G6(z):
-    assert(in_region_G6(acb(z), α, ε))
+    assert(in_region_G6(acb(z), α))

@@ -1,21 +1,20 @@
+import logging
 import flint
 from flint import arb, acb
 
 r0 = arb("0.95")
 
+logger = logging.getLogger(__name__)
+
 # ######################
 # # Internal functions #
 # ######################
-def _compute_r1(α: arb,  ε: arb) -> arb:
+def _compute_r1(α: arb) -> arb:
+    ε = arb(10**(-flint.ctx.dps))
     π = flint.arb.pi()
     C0 = arb("1.3")**(arb("1") - α)/(π * arb.sin(π * α))
     r1 = (arb("-2") * arb.log(ε/C0))**α
     return r1
-# def _compute_r1(alpha: float, acc: float) -> float:
-#     π = flint.arb.pi()
-#     C0 = (1.3**(1.0 - alpha)) / (pi * sin(pi * alpha)) # Equation (5.3)
-#     r1 = (-2.0 * log(acc/C0))**alpha # Equation (4.21)
-#     return r1
 
 def _compute_delta_deltat(α: arb) -> [arb, arb]:
     """
@@ -75,74 +74,76 @@ def _closed_wedgep(z: acb, ϕ1: arb, ϕ2: arb) -> bool:
 # ######################
 # # External functions #
 # ######################
-def in_region_G0(z: acb, α: arb, ε: arb) -> bool:
+def in_region_G0(z: acb, α: arb) -> bool:
     """
     Returns whether z lies in Region G0, eq. (3.4)
     """
+    #logger.info(flint.ctx)
     return _closed_diskp(z, r0)
 
-def in_region_G1(z: acb, α: arb, ε: arb) -> bool:
+def in_region_G1(z: acb, α: arb) -> bool:
     """
     Returns whether z lies in Region G1, eq. (3.5)
     """
+    logger.debug(flint.ctx)
     π = flint.arb.pi()
-    r1 = _compute_r1(α, ε)
+    r1 = _compute_r1(α)
     δ, _ = _compute_delta_deltat(α)
     ϕ1, ϕ2 = -π * α + δ, +π * α - δ
 
     return (not _open_diskp(z, r1)) and _open_wedgep(z, ϕ1, ϕ2)
 
-def in_region_G2(z: acb, α: arb, ε: arb) -> bool:
+def in_region_G2(z: acb, α: arb) -> bool:
     """
     Returns whether z lies in Region G2, eq. (3.6)
     """
     π = flint.arb.pi()
-    r1 = _compute_r1(α, ε)
+    r1 = _compute_r1(α)
     _, τ = _compute_delta_deltat(α)
     ϕ1, ϕ2 = +π * α + τ, -π * α - τ
 
     return (not _open_diskp(z, r1)) and _open_wedgep(z, ϕ1, ϕ2)
 
-def in_region_G3(z: acb, α: arb, ε: arb) -> bool:
+def in_region_G3(z: acb, α: arb) -> bool:
     """
     Returns whether z lies in Region G3, eq. (3.7)
     """
     π = flint.arb.pi()
-    r1 = _compute_r1(α, ε)
+    r1 = _compute_r1(α)
     δ, τ = _compute_delta_deltat(α)
     ϕ1, ϕ2 = π * α - δ, π * α + τ
 
     return (not _open_diskp(z, r1)) and _closed_wedgep(z, ϕ1, ϕ2)
 
-def in_region_G4(z: acb, α: arb, ε: arb) -> bool:
+def in_region_G4(z: acb, α: arb) -> bool:
     """
     Returns whether z lies in Region G4, eq. (3.8)
     """
     π = flint.arb.pi()
-    r1 = _compute_r1(α, ε)
+    r1 = _compute_r1(α)
     δ, τ = _compute_delta_deltat(α)
     ϕ1, ϕ2 = -π * α - τ, -π * α + δ
     
     return (not _open_diskp(z, r1)) and _closed_wedgep(z, ϕ1, ϕ2)
 
-def in_region_G5(z: acb, α: arb, ε: arb) -> float:
+def in_region_G5(z: acb, α: arb) -> float:
     """
     Returns whether z lies in Region G5, eq. (3.9)
     """
     π = flint.arb.pi()
     five_over_six = arb("5/6")
-    r1 = _compute_r1(α, ε)
+    r1 = _compute_r1(α)
     ϕ1, ϕ2 = -five_over_six * π * α, +five_over_six * π * α
 
     return _open_diskp(z, r1) and (_closed_wedgep(z, ϕ1, ϕ2) and (not _open_diskp(z, r0)))
 
-def in_region_G6(z: acb, α: arb, ε: arb) -> float:
+def in_region_G6(z: acb, α: arb) -> float:
     """
     Returns whether z lies in Region G6, eq. (3.10)
     """
     π = flint.arb.pi()
     five_over_six = arb("5/6")
-    r1 = _compute_r1(α, ε)
+    r1 = _compute_r1(α)
     ϕ1, ϕ2 = +five_over_six * π * α, -five_over_six * π * α
 
     return _open_diskp(z, r1) and (_open_wedgep(z, ϕ1, ϕ2) and (not _open_diskp(z, r0)))
