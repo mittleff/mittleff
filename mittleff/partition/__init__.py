@@ -85,7 +85,7 @@ def in_region_G1(z: acb, α: arb) -> bool:
     """
     Returns whether z lies in Region G1, eq. (3.5)
     """
-    logger.debug(flint.ctx)
+    #logger.debug(flint.ctx)
     π = flint.arb.pi()
     r1 = _compute_r1(α)
     δ, _ = _compute_delta_deltat(α)

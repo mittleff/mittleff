@@ -3,32 +3,20 @@ import flint
 from flint import arb, acb
 from .partition import in_region_G0, in_region_G1, in_region_G2, in_region_G3, in_region_G4, in_region_G5, in_region_G6
 from .algorithm import mittleff0, mittleff1, mittleff2, mittleff3, mittleff4, mittleff5, mittleff6
-#from math import fabs, floor, log
 
 logger = logging.getLogger(__name__)
 
 def mittleff(α: arb, β: arb, z: acb, ε: arb = None, prec: int = 53) -> acb:
-    logger.info(f'''
-######################################################################
-# Parameters:
-#   α = {α}
-#   β = {β}
-#   z = {z}
-#   ε = {ε}
-######################################################################
-''')
     #prec = 53          # real/complex precision (in bits)
     #dps = 15           # real/complex precision (in digits)
-
     flint.ctx.prec = prec
-    #dps = int(fabs(floor(log(2**prec)/log(10)))) - 1
-    
+    res = None
     if in_region_G0(z, α):
         ################################
         # Evaluate using Taylor series #
         ################################
-        logger.info(f"\n{z} ∈ G_0")
-        return mittleff0(α, β, z, ε)
+        logger.info(f"{z} ∈ G_0")
+        res = mittleff0(α, β, z)
     else:
         if α > 1:
             logger.debug(f"α={α} > 1: applying recursive relation")
@@ -38,17 +26,13 @@ def mittleff(α: arb, β: arb, z: acb, ε: arb = None, prec: int = 53) -> acb:
             π = flint.arb.pi()
             one, two, J = arb("1"), arb("2"), acb(0+1j)
             m = int(float(arb.mid(arb.ceil(α))))
-            #print('m = ', m)
             s = acb(0+0j)
             a = α / m
-            #print(s)
             for h in range(0, m):
                 zp = z.pow(one / m) * acb.exp(two * π * J * h / m)
-                #print(f"h = {h}", mittleff(a, β, zp, ε))
-                s += mittleff(a, β, zp, ε)
+                s += mittleff(a, β, zp)
             s = (one/m) * s
-            #print('s = ', s)
-            return s
+            res = s
             ##################################
             # Apply recursive relation (2.2) #
             ##################################
@@ -65,24 +49,34 @@ def mittleff(α: arb, β: arb, z: acb, ε: arb = None, prec: int = 53) -> acb:
             #     print(f"h = {h}", _mittleff(a, β, zp, ε))
             #     s += _mittleff(a, β, zp, ε)                
             # return one/(two*m + one) * s
+            #res = s
         else:
             if in_region_G1(z, α):
-                logger.info(f"\n{z} ∈ G_1")
-                return mittleff1(α, β, z, ε)
+                logger.info(f"{z} ∈ G_1")
+                res = mittleff1(α, β, z)
             elif in_region_G2(z, α):
-                logger.info(f"\n{z} ∈ G_2")
-                return mittleff2(α, β, z, ε)
+                logger.info(f"{z} ∈ G_2")
+                res = mittleff2(α, β, z)
             elif in_region_G3(z, α):
-                logger.info(f"\n{z} ∈ G_3")
-                return mittleff3(α, β, z, ε)
+                logger.info(f"{z} ∈ G_3")
+                res = mittleff3(α, β, z)
             elif in_region_G4(z, α):
-                logger.info(f"\n{z} ∈ G_4")
-                return mittleff4(α, β, z, ε)
+                logger.info(f"{z} ∈ G_4")
+                res = mittleff4(α, β, z)
             elif in_region_G5(z, α):
-                logger.info(f"\n{z} ∈ G_5")
-                return mittleff5(α, β, z, ε)
+                logger.info(f"{z} ∈ G_5")
+                res = mittleff5(α, β, z)
             elif in_region_G6(z, α):
-                logger.info(f"\n{z} ∈ G_6")
-                return mittleff6(α, β, z, ε)
+                logger.info(f"{z} ∈ G_6")
+                res = mittleff6(α, β, z)
             else:
-                raise Exception(f"Could not find region for {z}") 
+                raise Exception(f"Could not find region for {z}")
+
+    logger.info(f'''============================== RESULTS ==============================
+#   α = {α}
+#   β = {β}
+#   z = {z}
+#   res = {res}
+''')            
+
+    return res

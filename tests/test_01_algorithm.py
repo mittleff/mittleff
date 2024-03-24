@@ -27,8 +27,8 @@ def expected_beta_large(z: complex) -> complex:
     +1.59189786e-01+3.86077993e-02j
     ])
 def test_mittleff0(z):
-    α, β, z, ε = arb("0.5"), arb("1.0"), acb(z), arb("1e-15")
-    computed = taylor_series(α, β, z, ε)
+    α, β, z = arb("0.5"), arb("1.0"), acb(z)
+    computed = taylor_series(α, β, z)
     assert(isclose(expected(z), computed))
 
 @pytest.mark.parametrize("z", [
@@ -44,8 +44,8 @@ def test_mittleff0(z):
     +5.72222055e+00+5.86522403e+00j
     ])
 def test_mittleff1(z):
-    α, β, z, ε = arb("0.5"), arb("1.0"), acb(z), arb("1e-15")
-    computed = mittleff1(α, β, z, ε)
+    α, β, z = arb("0.5"), arb("1.0"), acb(z)
+    computed = mittleff1(α, β, z)
     assert(isclose(expected(z), computed))
 
 @pytest.mark.parametrize("z", [
@@ -61,8 +61,8 @@ def test_mittleff1(z):
     -7.05943454e+00+7.46849452e+00j
     ])
 def test_mittleff2(z):
-    α, β, z, ε = arb("0.5"), arb("1.0"), acb(z), arb("1e-15")
-    computed = mittleff2(α, β, z, ε)
+    α, β, z = arb("0.5"), arb("1.0"), acb(z)
+    computed = mittleff2(α, β, z)
     assert(isclose(expected(z), computed))
 
 @pytest.mark.parametrize("z", [
@@ -78,8 +78,8 @@ def test_mittleff2(z):
     +1.13040766e+00+9.12078090e+00j
     ])
 def test_mittleff3(z):
-    α, β, z, ε = arb("0.5"), arb("1.0"), acb(z), arb("1e-15")
-    computed = mittleff3(α, β, z, ε)
+    α, β, z = arb("0.5"), arb("1.0"), acb(z)
+    computed = mittleff3(α, β, z)
     assert(isclose(expected(z), computed))
 
 @pytest.mark.parametrize("z", [
@@ -95,8 +95,8 @@ def test_mittleff3(z):
     -1.52222011e+00-9.69011955e+00j
     ])
 def test_mittleff4(z):
-    α, β, z, ε = arb("0.5"), arb("1.0"), acb(z), arb("1e-15")
-    computed = mittleff4(α, β, z, ε)
+    α, β, z = arb("0.5"), arb("1.0"), acb(z)
+    computed = mittleff4(α, β, z)
     assert(isclose(expected(z), computed))
 
 @pytest.mark.parametrize("z", [
@@ -112,8 +112,8 @@ def test_mittleff4(z):
     +2.03837467e+00-3.27614785e+00j,
     ])
 def test_mittleff5(z):
-    α, β, z, ε = arb("0.5"), arb("1.0"), acb(z), arb("1e-15")
-    computed = mittleff5(α, β, z, ε)
+    α, β, z = arb("0.5"), arb("1.0"), acb(z)
+    computed = mittleff5(α, β, z)
     assert(isclose(expected(z), computed))
 
 @pytest.mark.parametrize("z", [
@@ -129,8 +129,8 @@ def test_mittleff5(z):
     -2.97631495e+00+6.48320798e+00j,
     ])
 def test_mittleff6(z):
-    α, β, z, ε = arb("0.5"), arb("1.0"), acb(z), arb("1e-15")
-    computed = mittleff6(α, β, z, ε)
+    α, β, z = arb("0.5"), arb("1.0"), acb(z)
+    computed = mittleff6(α, β, z)
     assert(isclose(expected(z), computed))
 
 @pytest.mark.parametrize("z", [
@@ -147,5 +147,5 @@ def test_mittleff6(z):
     ])
 def test_mittleff6_beta_large(z):
     α, β, z, ε = arb("0.5"), arb("1.5"), acb(z), arb("1e-15")
-    computed = mittleff6(α, β, z, ε)
+    computed = mittleff6(α, β, z)
     assert(isclose(expected_beta_large(z), computed))    

@@ -10,47 +10,48 @@ logger = logging.getLogger(__name__)
 # External functions #
 ######################
 
-def mittleff0(α: arb, β: arb, z: acb, ε: arb) -> acb:
+def mittleff0(α: arb, β: arb, z: acb) -> acb:
     logger.info(f"Called mittleff0")
-    return taylor_series(α, β, z, ε)
+    return taylor_series(α, β, z)
 
-def mittleff1(α: arb, β: arb, z: acb, ε: arb) -> acb:
+def mittleff1(α: arb, β: arb, z: acb) -> acb:
     logger.info(f"Called mittleff1")
-    return asymptotic_series(α, β, z, ε, 1)
+    return asymptotic_series(α, β, z, 1)
 
-def mittleff2(α: arb, β: arb, z: acb, ε: arb) -> acb:
+def mittleff2(α: arb, β: arb, z: acb) -> acb:
     logger.info(f"Called mittleff2")
-    return asymptotic_series(α, β, z, ε, 2)
+    return asymptotic_series(α, β, z, 2)
 
-def mittleff3(α: arb, β: arb, z: acb, ε: arb) -> acb:
+def mittleff3(α: arb, β: arb, z: acb) -> acb:
     logger.info(f"Called mittleff3")
-    return asymptotic_series(α, β, z, ε, 3)
+    return asymptotic_series(α, β, z, 3)
 
-def mittleff4(α: arb, β: arb, z: acb, ε: arb) -> acb:
+def mittleff4(α: arb, β: arb, z: acb) -> acb:
     logger.info(f"Called mittleff4")
-    return asymptotic_series(α, β, z, ε, 4)
+    return asymptotic_series(α, β, z, 4)
 
-def mittleff5(α: arb, β: arb, z: acb, ε: arb) -> acb:
+def mittleff5(α: arb, β: arb, z: acb) -> acb:
     """
     apply eqs. (4.25) and (4.26)
     """
     logger.info(f"Called mittleff5")
     π = flint.arb.pi()
-    return _mittleff5_6(α, β, z, ε, π * α, 1.0)
+    return _mittleff5_6(α, β, z, π * α, 1.0)
 
-def mittleff6(α: arb, β: arb, z: acb, ε: arb) -> acb:
+def mittleff6(α: arb, β: arb, z: acb) -> acb:
     """
     Apply equations (4.31) and (4.32)
     """
     logger.info(f"Called mittleff6")
     π = flint.arb.pi()
-    return _mittleff5_6(α, β, z, ε, 2.0 * π * α/3.0, 0.0)
+    return _mittleff5_6(α, β, z, 2.0 * π * α/3.0, 0.0)
 
 ######################
 # Internal functions #
 ######################
-def taylor_series (α: arb, β: arb, z: acb, ε: arb) -> acb:
+def taylor_series (α: arb, β: arb, z: acb) -> acb:
     logger.info(f"Called taylor_series")
+    ε = arb(10**(-flint.ctx.dps))
     one, two = arb("1"), arb("2")
     absz = acb.abs_lower(z)
     
@@ -60,16 +61,16 @@ def taylor_series (α: arb, β: arb, z: acb, ε: arb) -> acb:
 
     return sum([arb.rgamma(α * k + β) * z.pow(k) for k in range(kmax + 1)])
 
-def asymptotic_series(α: arb, β: arb, z: acb, ε: arb, region: int) -> acb:
+def asymptotic_series(α: arb, β: arb, z: acb, region: int) -> acb:
     one = arb("1")
     absz = acb.abs_lower(z)
-    kmax = int(float(arb.mid(arb.ceil((one/α) * absz**(one/α)) + one)))
+    kmax = 2*int(float(arb.mid(arb.ceil((one/α) * absz**(one/α)) + one)))
     fac = (one/α) * z.pow((one-β)/α) * acb.exp(z.pow(one/α))
 
     res = fac * _lambda(region, α, β, z) - sum([arb.rgamma(-α * k + β) * z.pow(-k) for k in range(1, kmax + 1)])
-    logger.debug(f"fac = {fac}")
-    logger.debug(f"_lambda(region, α, β, z) = {_lambda(region, α, β, z)}")
-    logger.debug(f"sum = {sum([arb.rgamma(-α * k + β) * z.pow(-k) for k in range(1, kmax + 1)])}")
+    #logger.debug(f"fac = {fac}")
+    #logger.debug(f"_lambda(region, α, β, z) = {_lambda(region, α, β, z)}")
+    #logger.debug(f"sum = {sum([arb.rgamma(-α * k + β) * z.pow(-k) for k in range(1, kmax + 1)])}")
     return res
 
 def _lambda(region: int, α: arb, β: arb, z: acb) -> acb:
@@ -90,7 +91,8 @@ def _lambda(region: int, α: arb, β: arb, z: acb) -> acb:
         res = (one/(two * α)) * f1 * f2 * f3
     return res
 
-def _compute_rmax(α: arb, β: arb, z: acb, ε: arb) -> arb:
+def _compute_rmax(α: arb, β: arb, z: acb) -> arb:
+    ε = arb(10**(-flint.ctx.dps))
     π = flint.arb.pi()
     one, two = arb("1"), arb("2")
     r1, r2, r3 = arb(0.0), arb(0.0), arb(0.0)
@@ -118,29 +120,31 @@ def _compute_rmax(α: arb, β: arb, z: acb, ε: arb) -> arb:
     res = arb.max(r1, arb.max(r2, r3))
     return res
 
-def _mittleff5_6 (α: arb, β: arb, z: acb, ε: arb, c1: arb, c2: arb) -> acb:
+def _mittleff5_6 (α: arb, β: arb, z: acb, c1: arb, c2: arb) -> acb:
     logger.info(f"Called _mittleff5_6")
     zero, half, one = arb("0"), arb("0.5"), arb("1")
-    rmax = _compute_rmax(α, β, z, ε)
-    logger.debug(f"rmax = {rmax}")
+    rmax = _compute_rmax(α, β, z)
+    #logger.debug(f"rmax = {rmax}")
     aux = c2 * A(z, α, β, zero)
     integ = zero    
     if β <= one:
         #logger.debug(f"{α}, {β}\n{z}, {c1}\n{zero}, {rmax}, {ε}")
-        integ = quadb(α, β, z, c1, zero, rmax, ε)
+        integ = quadb(α, β, z, c1, zero, rmax)
     else:
-        int1 = quadb(α, β, z, c1, half, (one + c2) * rmax, ε)
-        int2 = quadc(α, β, z, half, -c1, c1, ε)
+        int1 = quadb(α, β, z, c1, half, (one + c2) * rmax)
+        int2 = quadc(α, β, z, half, -c1, c1)
         integ = int1 + int2
     return aux + integ
 
-def quadb(α: arb, β: arb, z: acb, φ: arb, a: arb, b: arb, ε: arb):
+def quadb(α: arb, β: arb, z: acb, φ: arb, a: arb, b: arb):
+    ε = arb(10**(-flint.ctx.dps))
     logger.info(f"Called quadb")
     #logger.info(f"a, b = {a}, {b}")
-    return numerical_integral(lambda r: B(r, α, β, z, φ), a, b, ε)
+    return numerical_integral(lambda r: B(r, α, β, z, φ), a, b)
 
-def quadc(α: arb, β: arb, z: acb, ρ: arb, a: arb, b: arb, ε: arb):
-    return numerical_integral(lambda φ: C(φ, α, β, z, ρ), a, b, ε)    
+def quadc(α: arb, β: arb, z: acb, ρ: arb, a: arb, b: arb):
+    ε = arb(10**(-flint.ctx.dps))
+    return numerical_integral(lambda φ: C(φ, α, β, z, ρ), a, b)    
 
 # TODO check integration limits!
 def numerical_integral(func, a, b, acc = 1e-14):
