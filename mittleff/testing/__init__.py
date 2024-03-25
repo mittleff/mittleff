@@ -15,16 +15,17 @@ def sample_from_disk(r = 1.5, n = 30):
 def update_test_02_mittleff():
     fp = open("test_02_mittleff.py", "w")
     fp.write('''
-    import pytest
-    from flint import acb, arb
-    from cmath import isclose
-    from mittleff import mittleff
+import pytest
+from flint import acb, arb
+from cmath import isclose
+from mittleff import mittleff
+from mittleff.matlab import MittagLefflerSeybold, MittagLefflerGarrapa
     
     ''')
     
     print('''
     #############################################
-    # Tests for $E_{1, 1}(z) = \mathrm{exp}(z)$ #
+    # Tests for $E_{1, 1}(z) = \\mathrm{exp}(z)$ #
     #############################################
     ''')
     s = []
@@ -34,23 +35,23 @@ def update_test_02_mittleff():
     s = "\n".join(s)
     
     fp.write(f'''
-    @pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
-    {'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
-    {s}
-    ])
-    def test_exp(α, β, z, expected, expected_seybold, expected_garrapa):
-        """Test special case
-    
-        .. math::
-            E_{{1, 1}}(z) = \\\\exp(z)
-        """
-        α, β, z = arb(α), arb(β), acb(z)
-        computed = complex(mittleff(α, β, z))
-        assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
+@pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
+{'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
+{s}
+])
+def test_exp(α, β, z, expected, expected_seybold, expected_garrapa):
+    """Test special case
+
+    .. math::
+        E_{{1, 1}}(z) = \\\\exp(z)
+    """
+    α, β, z = arb(α), arb(β), acb(z)
+    computed = complex(mittleff(α, β, z))
+    assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
     
     print('''
     ###############################################
-    # Tests for $E_{2, 1}(z) = \cosh(\sqrt{z})$ #
+    # Tests for $E_{2, 1}(z) = \\cosh(\\sqrt{z})$ #
     ###############################################
     ''')
     s = []
@@ -60,24 +61,24 @@ def update_test_02_mittleff():
     s = "\n".join(s)
     
     fp.write(f'''
-    @pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
-    {'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
-    {s}
-    ])
-    def test_cos(α, β, z, expected, expected_seybold, expected_garrapa):
-        """Test special case
-    
-        .. math::
-            E_{{2, 1}}(z) = \\\\cosh(\\\\sqrt{z})
-        """
-        α, β, z = arb(α), arb(β), acb(z)
-        computed = complex(mittleff(α, β, z))
-        assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
+@pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
+{'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
+{s}
+])
+def test_cos(α, β, z, expected, expected_seybold, expected_garrapa):
+    """Test special case
+
+    .. math::
+        E_{{2, 1}}(z) = \\\\cosh(\\\\sqrt{z})
+    """
+    α, β, z = arb(α), arb(β), acb(z)
+    computed = complex(mittleff(α, β, z))
+    assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
     
 
     print('''
     ####################################################################
-    # Tests for $E_{2, 2}(z) = \frac{\mathrm{sinh}\sqrt{z}}{\sqrt{z}}$ #
+    # Tests for $E_{2, 2}(z) = \\frac{\\mathrm{sinh}\\sqrt{z}}{\\sqrt{z}}$ #
     ####################################################################
     ''')
     s = []
@@ -87,24 +88,24 @@ def update_test_02_mittleff():
     s = "\n".join(s)
     
     fp.write(f'''
-    @pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
-    {'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
-    {s}
-    ])
-    def test_sin(α, β, z, expected, expected_seybold, expected_garrapa):
-        """Test special case
-    
-        .. math::
-            E_{{2, 2}}(z) = \\\\mathrm{{sinh}}\\\\sqrt{{z}}/\\\\sqrt{{z}}
-        """
-        α, β, z = arb(α), arb(β), acb(z)
-        computed = complex(mittleff(α, β, z))
-        assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
+@pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
+{'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
+{s}
+])
+def test_sin(α, β, z, expected, expected_seybold, expected_garrapa):
+    """Test special case
+
+    .. math::
+        E_{{2, 2}}(z) = \\\\mathrm{{sinh}}\\\\sqrt{{z}}/\\\\sqrt{{z}}
+    """
+    α, β, z = arb(α), arb(β), acb(z)
+    computed = complex(mittleff(α, β, z))
+    assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
     
 
     print('''
     ########################################################
-    # Tests for $E_{1/2, 1}(z) = e^{z^2}\mathrm{erfc}(-z)$ #
+    # Tests for $E_{1/2, 1}(z) = e^{z^2}\\mathrm{erfc}(-z)$ #
     ########################################################
     ''')
     s = []
@@ -114,19 +115,19 @@ def update_test_02_mittleff():
     s = "\n".join(s)
     
     fp.write(f'''
-    @pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
-    {'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
-    {s}
-    ])
-    def test_erfc(α, β, z, expected, expected_seybold, expected_garrapa):
-        """Test special case
-    
-        .. math::
-            E_{{1/2, 1}}(z) = e^{{z^2}}\\mathrm{{erfc}}(-z)
-        """
-        α, β, z = arb(α), arb(β), acb(z)
-        computed = complex(mittleff(α, β, z))
-        assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
+@pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
+{'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
+{s}
+])
+def test_erfc(α, β, z, expected, expected_seybold, expected_garrapa):
+    """Test special case
+
+    .. math::
+        E_{{1/2, 1}}(z) = e^{{z^2}}\\\\mathrm{{erfc}}(-z)
+    """
+    α, β, z = arb(α), arb(β), acb(z)
+    computed = complex(mittleff(α, β, z))
+    assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
     
 
     print('''
@@ -155,21 +156,21 @@ def update_test_02_mittleff():
         (0.6, -0.8, 7.0*np.exp(0.6 * np.pi * 1j)),
         (0.6, -0.8, 20.0*np.exp(0.6 * np.pi * 1j)),
     ]:
-        expected, expected_seybold, expected_garrapa = float("NaN"), MittagLefflerSeybold(α, β, z), MittagLefflerGarrapa(α, β, z)
-        s.append(f"{'': <4}({α:+.2e}, {β:+.2e}, {complex(z):+.12e}, {complex(expected):+.12e}, {complex(expected_seybold):+.12e}, {complex(expected_garrapa):+.12e}),")
+        expected_seybold, expected_garrapa = MittagLefflerSeybold(α, β, z), MittagLefflerGarrapa(α, β, z)
+        s.append(f"{'': <4}({α:+.2e}, {β:+.2e}, {complex(z):+.12e}, complex('NaN'), {complex(expected_seybold):+.12e}, {complex(expected_garrapa):+.12e}),")
     s = "\n".join(s)
     
     fp.write(f'''
-    @pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
-    {'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
-    {s}
-    ])
-    def test_siam(α, β, z, expected, expected_seybold, expected_garrapa):
-        """Tests for compare with table from the paper
-        """
-        α, β, z = arb(α), arb(β), acb(z)
-        computed = complex(mittleff(α, β, z))
-        assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
+@pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
+{'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
+{s}
+])
+def test_siam(α, β, z, expected, expected_seybold, expected_garrapa):
+    """Tests for compare with table from the paper
+    """
+    α, β, z = arb(α), arb(β), acb(z)
+    computed = complex(mittleff(α, β, z))
+    assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
         
 
     print('''
@@ -195,18 +196,18 @@ def update_test_02_mittleff():
     s = "\n".join(s)
     
     fp.write(f'''
-    @pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
-    {'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
-    {s}
-    ])
-    def test_mittleffjl_testset_mittleff(α, β, z, expected, expected_seybold, expected_garrapa):
-        """Tests from https://github.com/JuliaMath/MittagLeffler.jl
-    
-        testset "mittleff"
-        """
-        α, β, z = arb(α), arb(β), acb(z)
-        computed = complex(mittleff(α, β, z))
-        assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
+@pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
+{'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
+{s}
+])
+def test_mittleffjl_testset_mittleff(α, β, z, expected, expected_seybold, expected_garrapa):
+    """Tests from https://github.com/JuliaMath/MittagLeffler.jl
+
+    testset "mittleff"
+    """
+    α, β, z = arb(α), arb(β), acb(z)
+    computed = complex(mittleff(α, β, z))
+    assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
 
     print('''
     ######################
@@ -224,18 +225,18 @@ def update_test_02_mittleff():
     s = "\n".join(s)
     
     fp.write(f'''
-    @pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
-    {'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
-    {s}
-    ])
-    def test_mittleffjl_testset_branches(α, β, z, expected, expected_seybold, expected_garrapa):
-        """Tests from https://github.com/JuliaMath/MittagLeffler.jl
-    
-        testset "mittleff"
-        """
-        α, β, z = arb(α), arb(β), acb(z)
-        computed = complex(mittleff(α, β, z))
-        assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
+@pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
+{'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
+{s}
+])
+def test_mittleffjl_testset_branches(α, β, z, expected, expected_seybold, expected_garrapa):
+    """Tests from https://github.com/JuliaMath/MittagLeffler.jl
+
+    testset "mittleff"
+    """
+    α, β, z = arb(α), arb(β), acb(z)
+    computed = complex(mittleff(α, β, z))
+    assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
     
     
     print('''
@@ -252,18 +253,18 @@ def update_test_02_mittleff():
     s = "\n".join(s)
     
     fp.write(f'''
-    @pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
-    {'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
-    {s}
-    ])
-    def test_mittleffjl_testset_issue_008(α, β, z, expected, expected_seybold, expected_garrapa):
-        """Tests from https://github.com/JuliaMath/MittagLeffler.jl
-    
-        testset for issue #8
-        """
-        α, β, z = arb(α), arb(β), acb(z)
-        computed = complex(mittleff(α, β, z))
-        assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
+@pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
+{'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
+{s}
+])
+def test_mittleffjl_testset_issue_008(α, β, z, expected, expected_seybold, expected_garrapa):
+    """Tests from https://github.com/JuliaMath/MittagLeffler.jl
+
+    testset for issue #8
+    """
+    α, β, z = arb(α), arb(β), acb(z)
+    computed = complex(mittleff(α, β, z))
+    assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
 
 
     print('''
@@ -280,17 +281,17 @@ def update_test_02_mittleff():
     s = "\n".join(s)
     
     fp.write(f'''
-    @pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
-    {'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
-    {s}
-    ])
-    def test_mittleffjl_testset_issue_012(α, β, z, expected, expected_seybold, expected_garrapa):
-        """Tests from https://github.com/JuliaMath/MittagLeffler.jl
-    
-        testset for issue #12
-        """
-        α, β, z = arb(α), arb(β), acb(z)
-        computed = complex(mittleff(α, β, z))
-        assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
+@pytest.mark.parametrize("α, β, z, expected, expected_seybold, expected_garrapa", [
+{'': <4}# α, β, z, expected, expected_seybold, expected_garrapa
+{s}
+])
+def test_mittleffjl_testset_issue_012(α, β, z, expected, expected_seybold, expected_garrapa):
+    """Tests from https://github.com/JuliaMath/MittagLeffler.jl
+
+    testset for issue #12
+    """
+    α, β, z = arb(α), arb(β), acb(z)
+    computed = complex(mittleff(α, β, z))
+    assert(isclose(expected, computed) or isclose(expected_seybold, computed) or isclose(expected_garrapa, computed))''')
         
     fp.close()
