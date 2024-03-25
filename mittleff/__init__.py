@@ -14,16 +14,19 @@ def mittleff(α: arb, β: arb, z: acb, ε: arb = None, prec: int = 53) -> acb:
     #######################
     # Check special cases #
     #######################
-    if acb.abs_lower(z) == 0:
-        res = acb.rgamma(beta)
+    # if acb.abs_lower(z) == 0:
+    #     res = acb.rgamma(beta)
+    # if α == 1 and β == 1:
+    #     res = acb.exp(z)
+    # elif α == 2 and β == 1:
+    #     res = acb.cosh(acb.sqrt(z))
+    # elif α == 2 and β == 2:
+    #     res = acb.sinh(acb.sqrt(z))/acb.sqrt(z)
+    # elif α == 0.5 and β == 1:
+    #     res = acb.exp(z**2) * acb.erfc(-z)    
+    # el
     if α == 1 and β == 1:
-        res = acb.exp(z)
-    elif α == 2 and β == 1:
-        res = acb.cosh(acb.sqrt(z))
-    elif α == 2 and β == 2:
-        res = acb.sinh(acb.sqrt(z))/acb.sqrt(z)
-    elif α == 0.5 and β == 1:
-        res = acb.exp(z**2) * acb.erfc(-z)    
+         res = acb.exp(z)
     elif in_region_G0(z, α):
         ################################
         # Evaluate using Taylor series #
@@ -36,33 +39,29 @@ def mittleff(α: arb, β: arb, z: acb, ε: arb = None, prec: int = 53) -> acb:
             ###############################################
             # Apply recursive relation (2.14) from thesis #
             ###############################################
-            π = flint.arb.pi()
-            one, two, J = arb("1"), arb("2"), acb(0+1j)
-            m = int(float(arb.mid(arb.ceil(α))))
-            s = acb(0+0j)
-            a = α / m
-            for h in range(0, m):
-                zp = z.pow(one / m) * acb.exp(two * π * J * h / m)
-                s += mittleff(a, β, zp)
-            s = (one/m) * s
-            res = s
+            # π = flint.arb.pi()
+            # one, two, J = arb("1"), arb("2"), acb(0+1j)
+            # m = int(float(arb.mid(arb.ceil(α))))
+            # s = acb(0+0j)
+            # a = α / m
+            # for h in range(0, m):
+            #     zp = z.pow(one / m) * acb.exp(two * π * J * h / m)
+            #     s += mittleff(a, β, zp)
+            # s = (one/m) * s
+            # res = s
             ##################################
             # Apply recursive relation (2.2) #
             ##################################
-            # π = flint.arb.pi()
-            # one, two, J = arb("1"), arb("2"), acb(0+1j)
-            # m = int(float(arb.mid(arb.floor((α - one)/two) + one)))
-            # #print('m = ', m)
-            # s = acb(0+0j)
-            # a = α / (two * m + one)
-            # #print(s)
-            # for h in range(-m, m+1):
-            #     #print(f"h = {h}")
-            #     zp = z.pow(one / (two * m + one)) * acb.exp(two * π * J * h / (two*m + one))
-            #     print(f"h = {h}", _mittleff(a, β, zp, ε))
-            #     s += _mittleff(a, β, zp, ε)                
-            # return one/(two*m + one) * s
-            #res = s
+            π = flint.arb.pi()
+            one, two, J = arb("1"), arb("2"), acb(0+1j)
+            m = int(float(arb.mid(arb.floor((α - one)/two) + one)))
+            s = acb(0+0j)
+            a = α / (two * m + one)
+            for h in range(-m, m+1):
+                zp = z.pow(one / (two * m + one)) * acb.exp(two * π * J * h / (two*m + one))
+                s += mittleff(a, β, zp)                
+            return one/(two*m + one) * s
+            res = s
         else:
             if in_region_G1(z, α):
                 logger.info(f"{z} ∈ G_1")
