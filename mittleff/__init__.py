@@ -6,6 +6,13 @@ from .algorithm import mittleff0, mittleff1, mittleff2, mittleff3, mittleff4, mi
 
 logger = logging.getLogger(__name__)
 
+def MittagLeffler(α: float, β: float, z: complex, ε: float = 1e-15) -> complex:
+    res = mittleff(arb(α), arb(β), acb(z))
+    if res.imag < arb(ε):
+        return float(arb.mid(res.real))
+    else:
+        return complex(res)
+
 def mittleff(α: arb, β: arb, z: acb, ε: arb = None, prec: int = 53) -> acb:
     #prec = 53          # real/complex precision (in bits)
     #dps = 15           # real/complex precision (in digits)

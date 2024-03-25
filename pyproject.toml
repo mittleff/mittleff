@@ -10,6 +10,10 @@ python = ">=3.9"
 python-flint = "^0.6.0"
 pytest = "^8.1.1"
 
+[tool.poetry.group.dev.dependencies]
+matplotlib = "^3.8.3"
+numpy = "^1.26.4"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
