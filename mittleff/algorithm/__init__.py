@@ -64,7 +64,9 @@ def taylor_series (α: arb, β: arb, z: acb) -> acb:
 def asymptotic_series(α: arb, β: arb, z: acb, region: int) -> acb:
     one = arb("1")
     absz = acb.abs_lower(z)
-    kmax = 2*int(float(arb.mid(arb.ceil((one/α) * absz**(one/α)) + one)))
+    kmax = int(float(arb.mid(arb.ceil((one/α) * absz**(one/α)) + one)))
+    logger.debug(f"kmax = {kmax}")
+    
     fac = (one/α) * z.pow((one-β)/α) * acb.exp(z.pow(one/α))
 
     res = fac * _lambda(region, α, β, z) - sum([arb.rgamma(-α * k + β) * z.pow(-k) for k in range(1, kmax + 1)])

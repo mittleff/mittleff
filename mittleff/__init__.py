@@ -11,7 +11,20 @@ def mittleff(α: arb, β: arb, z: acb, ε: arb = None, prec: int = 53) -> acb:
     #dps = 15           # real/complex precision (in digits)
     flint.ctx.prec = prec
     res = None
-    if in_region_G0(z, α):
+    #######################
+    # Check special cases #
+    #######################
+    if acb.abs_lower(z) == 0:
+        res = acb.rgamma(beta)
+    if α == 1 and β == 1:
+        res = acb.exp(z)
+    elif α == 2 and β == 1:
+        res = acb.cosh(acb.sqrt(z))
+    elif α == 2 and β == 2:
+        res = acb.sinh(acb.sqrt(z))/acb.sqrt(z)
+    elif α == 0.5 and β == 1:
+        res = acb.exp(z**2) * acb.erfc(-z)    
+    elif in_region_G0(z, α):
         ################################
         # Evaluate using Taylor series #
         ################################
