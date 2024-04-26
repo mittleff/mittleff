@@ -20,7 +20,7 @@
 #
 
 AC_INIT([guile-mittleff], [0.1.0], [victor_santos@fisica.ufc.br])
-AC_CONFIG_MACRO_DIRS([m4])
+# AC_CONFIG_MACRO_DIRS([m4])
 AC_CONFIG_SRCDIR(mittleff.scm)
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([color-tests -Wall -Wno-portability foreign])
