@@ -48,7 +48,7 @@ if test "$cross_compiling" != no; then
 fi
 
 AC_CONFIG_FILES([Makefile mittleff/Makefile tests/Makefile])
-# AC_CONFIG_FILES([env], [chmod +x env])
+AC_CONFIG_FILES([env], [chmod +x env])
 # AC_CONFIG_FILES([hello/info.scm])
 
 AC_OUTPUT
