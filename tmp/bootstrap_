@@ -3,4 +3,4 @@
 # Helper script to generate/update configuration files
 #
 
-autoreconf --verbose --install
+autoreconf --verbose --install --force

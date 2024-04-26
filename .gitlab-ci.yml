@@ -1,0 +1,12 @@
+image: padawanphysicist/python-guile
+
+build:
+  script:
+    - ./autogen.sh
+    - ./configure
+    - make dist
+  artifacts:
+    paths:
+      - guile-pyffi*.gz
+  only:
+    - tags

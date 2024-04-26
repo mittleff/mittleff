@@ -1,76 +1,35 @@
 #
-# configure.ac
+# Process this file with autoconf to produce a configure script.
 #
-# Copyright (C) 2024 Victor Santos <victor_santos@fisica.ufc.br>
-#
-# This file is part of guile-mittleff.
-#
-# guile-mittleff is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-#
-# guile-mittleff is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-# General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with guile-mittleff. If not, see https://www.gnu.org/licenses/.
-#
-
-AC_INIT([guile-mittleff], [0.1.0], [victor_santos@fisica.ufc.br])
-# AC_CONFIG_MACRO_DIRS([m4])
-AC_CONFIG_SRCDIR(mittleff.scm)
+AC_PREREQ([2.69])
+AC_INIT([guile-pyffi], [1.0.0], [victor_santos@fisica.ufc.br])
 AC_CONFIG_AUX_DIR([build-aux])
-AM_INIT_AUTOMAKE([color-tests -Wall -Wno-portability foreign])
-AM_SILENT_RULES([yes])
+AC_REQUIRE_AUX_FILE([test-driver.scm])
+AC_CONFIG_SRCDIR([pyffi.scm])
+AC_CONFIG_HEADERS([config.h])
+AM_INIT_AUTOMAKE([foreign])
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+
+
 
 # Init libtool
 LT_INIT([shared disable-static])
 
-dnl We require pkg.m4 (from pkg-config) and guile.m4.
-dnl Make sure they are available.
-m4_pattern_forbid([PKG_CHECK_MODULES])
-m4_pattern_forbid([^GUILE_PKG])
+# Checks for programs.
+AC_PROG_CC
+AM_PATH_PYTHON([3.7])
+AC_SUBST(PYTHON_ABI,[`$PYTHON -c 'import sys; print("m") if int(sys.version_info.minor) < 8 else print("")'`])
 
-dnl Check for Guile 3.x.
-GUILE_PKG([3.0])
-GUILE_PROGS
-GUILE_SITE_DIR
+PKG_CHECK_MODULES([GUILE], [guile-3.0])
 
-dnl Guile prefix and libdir.
-GUILE_PREFIX=`$PKG_CONFIG --print-errors --variable=prefix guile-$GUILE_EFFECTIVE_VERSION`
-GUILE_LIBDIR=`$PKG_CONFIG --print-errors --variable=libdir guile-$GUILE_EFFECTIVE_VERSION`
-AC_SUBST(GUILE_PREFIX)
-AC_SUBST(GUILE_LIBDIR)
+# Checks for header files.
 
-if test "$cross_compiling" != no; then
-   GUILE_TARGET="--target=$host_alias"
-   AC_SUBST([GUILE_TARGET])
-fi
+# Checks for typedefs, structures, and compiler characteristics.
 
-AC_CONFIG_FILES([Makefile mittleff/Makefile lib/Makefile tests/Makefile])
-AC_CONFIG_FILES([env], [chmod +x env])
-# AC_CONFIG_FILES([hello/info.scm])
+# Checks for library functions.
+
+AC_CONFIG_FILES([Makefile
+		libpyffi/Makefile
+		pyffi/Makefile])
 
 AC_OUTPUT
-
-dnl This is just for printing $libdir below.
-LIBDIR=`eval echo $libdir`
-LIBDIR=`eval echo $LIBDIR`
-AC_SUBST([LIBDIR])
-
-echo
-echo "*** $PACKAGE $VERSION has been successfully configured ***"
-echo
-echo "$PACKAGE is using:"
-echo
-echo "    --prefix=$prefix --libdir=$LIBDIR"
-echo
-echo "If you want to install in Guile system's directory re-run with:"
-echo
-echo "    --prefix=$GUILE_PREFIX --libdir=$GUILE_LIBDIR"
-echo
-
-# configure.ac ends here
