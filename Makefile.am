@@ -19,7 +19,7 @@
 # along with guile-hello. If not, see https://www.gnu.org/licenses/.
 #
 
-SUBDIRS = hello tests
+SUBDIRS = mittleff tests
 
 ACLOCAL_AMFLAGS = -I build-aux
 
@@ -38,7 +38,7 @@ SUFFIXES = .scm .go
 .scm.go:
 	$(top_builddir)/env $(GUILD) compile $(GUILE_TARGET) $(GUILE_WARNINGS) -o "$@" "$<"
 
-SOURCES = hello.scm
+SOURCES = mittleff.scm
 
 CLEANFILES = $(GOBJECTS)
 

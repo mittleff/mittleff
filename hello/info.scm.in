@@ -1,5 +1,0 @@
-(define-module (hello info))
-
-(define-public (info)
-  (display "Absolute Source Directory: @abs_top_srcdir@")
-  (newline))

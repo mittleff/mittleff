@@ -3,25 +3,25 @@
 #
 # Copyright (C) 2024 Victor Santos <victor_santos@fisica.ufc.br>
 #
-# This file is part of guile-hello.
+# This file is part of guile-mittleff.
 #
-# guile-hello is free software: you can redistribute it and/or modify
+# guile-mittleff is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 #
-# guile-hello is distributed in the hope that it will be useful, but
+# guile-mittleff is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with guile-hello. If not, see https://www.gnu.org/licenses/.
+# along with guile-mittleff. If not, see https://www.gnu.org/licenses/.
 #
 
-AC_INIT([guile-hello], [1.0.0], [victor_santos@fisica.ufc.br])
+AC_INIT([guile-mittleff], [0.1.0], [victor_santos@fisica.ufc.br])
 AC_CONFIG_MACRO_DIRS([m4])
-AC_CONFIG_SRCDIR(hello.scm)
+AC_CONFIG_SRCDIR(mittleff.scm)
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([color-tests -Wall -Wno-portability foreign])
 AM_SILENT_RULES([yes])
@@ -47,9 +47,9 @@ if test "$cross_compiling" != no; then
    AC_SUBST([GUILE_TARGET])
 fi
 
-AC_CONFIG_FILES([Makefile hello/Makefile tests/Makefile])
-AC_CONFIG_FILES([env], [chmod +x env])
-AC_CONFIG_FILES([hello/info.scm])
+AC_CONFIG_FILES([Makefile mittleff/Makefile tests/Makefile])
+# AC_CONFIG_FILES([env], [chmod +x env])
+# AC_CONFIG_FILES([hello/info.scm])
 
 AC_OUTPUT
 
