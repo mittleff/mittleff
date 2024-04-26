@@ -26,6 +26,9 @@ AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([color-tests -Wall -Wno-portability foreign])
 AM_SILENT_RULES([yes])
 
+# Init libtool
+LT_INIT([shared disable-static])
+
 dnl We require pkg.m4 (from pkg-config) and guile.m4.
 dnl Make sure they are available.
 m4_pattern_forbid([PKG_CHECK_MODULES])
@@ -47,7 +50,7 @@ if test "$cross_compiling" != no; then
    AC_SUBST([GUILE_TARGET])
 fi
 
-AC_CONFIG_FILES([Makefile mittleff/Makefile tests/Makefile])
+AC_CONFIG_FILES([Makefile mittleff/Makefile lib/Makefile tests/Makefile])
 AC_CONFIG_FILES([env], [chmod +x env])
 # AC_CONFIG_FILES([hello/info.scm])
 
