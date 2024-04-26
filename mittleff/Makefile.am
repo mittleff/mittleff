@@ -22,7 +22,7 @@
 moddir=$(datadir)/guile/site/$(GUILE_EFFECTIVE_VERSION)/mittleff
 objdir=$(libdir)/guile/$(GUILE_EFFECTIVE_VERSION)/site-ccache/mittleff
 
-SOURCES = algorithm.scm constants.scm erfc.scm macros.scm mittleff.scm partition.scm quad.scm rgamma.scm
+SOURCES = algorithm.scm constants.scm sf.scm macros.scm mittleff.scm partition.scm quad.scm
 
 GOBJECTS = $(SOURCES:%.scm=%.go)
 
