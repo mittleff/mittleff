@@ -106,9 +106,15 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+build_triplet = @build@
+host_triplet = @host@
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/guile.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/build-aux/libtool.m4 \
+	$(top_srcdir)/build-aux/ltoptions.m4 \
+	$(top_srcdir)/build-aux/ltsugar.m4 \
+	$(top_srcdir)/build-aux/ltversion.m4 \
+	$(top_srcdir)/build-aux/lt~obsolete.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -323,7 +329,8 @@ RECHECK_LOGS = $(TEST_LOGS)
 AM_RECURSIVE_TARGETS = check recheck
 TEST_SUITE_LOG = test-suite.log
 am__test_logs1 = $(TESTS:=.log)
-TEST_LOGS = $(am__test_logs1:.scm.log=.log)
+am__test_logs2 = $(am__test_logs1:@EXEEXT@.log=.log)
+TEST_LOGS = $(am__test_logs2:.scm.log=.log)
 SCM_LOG_DRIVER = $(SHELL) $(top_srcdir)/build-aux/test-driver
 SCM_LOG_COMPILE = $(SCM_LOG_COMPILER) $(AM_SCM_LOG_FLAGS) \
 	$(SCM_LOG_FLAGS)
@@ -343,18 +350,32 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+CC = @CC@
+CCDEPMODE = @CCDEPMODE@
+CFLAGS = @CFLAGS@
+CPPFLAGS = @CPPFLAGS@
 CSCOPE = @CSCOPE@
 CTAGS = @CTAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
+DEPDIR = @DEPDIR@
+DLLTOOL = @DLLTOOL@
+DSYMUTIL = @DSYMUTIL@
+DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
+EGREP = @EGREP@
 ETAGS = @ETAGS@
+EXEEXT = @EXEEXT@
+FGREP = @FGREP@
+FILECMD = @FILECMD@
+GREP = @GREP@
 GUILD = @GUILD@
 GUILE = @GUILE@
 GUILE_CONFIG = @GUILE_CONFIG@
@@ -371,12 +392,25 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+LD = @LD@
+LDFLAGS = @LDFLAGS@
 LIBDIR = @LIBDIR@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBTOOL = @LIBTOOL@
+LIPO = @LIPO@
+LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
+NM = @NM@
+NMEDIT = @NMEDIT@
+OBJDUMP = @OBJDUMP@
+OBJEXT = @OBJEXT@
+OTOOL = @OTOOL@
+OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -388,6 +422,8 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
 PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
 PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
+RANLIB = @RANLIB@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -396,18 +432,31 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
+ac_ct_CC = @ac_ct_CC@
+ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
+am__include = @am__include@
 am__leading_dot = @am__leading_dot@
+am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
+build = @build@
 build_alias = @build_alias@
+build_cpu = @build_cpu@
+build_os = @build_os@
+build_vendor = @build_vendor@
 builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+host = @host@
 host_alias = @host_alias@
+host_cpu = @host_cpu@
+host_os = @host_os@
+host_vendor = @host_vendor@
 htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
@@ -441,7 +490,7 @@ EXTRA_DIST = $(TESTS) runner.scm
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .log .scm .trs
+.SUFFIXES: .log .scm .scm$(EXEEXT) .trs
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -471,6 +520,12 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
 tags TAGS:
 
 ctags CTAGS:
@@ -626,6 +681,13 @@ recheck: all
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_SCM_LOG_DRIVER_FLAGS) $(SCM_LOG_DRIVER_FLAGS) -- $(SCM_LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+@am__EXEEXT_TRUE@.scm$(EXEEXT).log:
+@am__EXEEXT_TRUE@	@p='$<'; \
+@am__EXEEXT_TRUE@	$(am__set_b); \
+@am__EXEEXT_TRUE@	$(am__check_pre) $(SCM_LOG_DRIVER) --test-name "$$f" \
+@am__EXEEXT_TRUE@	--log-file $$b.log --trs-file $$b.trs \
+@am__EXEEXT_TRUE@	$(am__common_driver_flags) $(AM_SCM_LOG_DRIVER_FLAGS) $(SCM_LOG_DRIVER_FLAGS) -- $(SCM_LOG_COMPILE) \
+@am__EXEEXT_TRUE@	"$$tst" $(AM_TESTS_FD_REDIRECT)
 distdir: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) distdir-am
 
@@ -700,7 +762,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic mostlyclean-am
+clean-am: clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
@@ -752,7 +814,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-generic
+mostlyclean-am: mostlyclean-generic mostlyclean-libtool
 
 pdf: pdf-am
 
@@ -767,15 +829,17 @@ uninstall-am:
 .MAKE: check-am install-am install-strip
 
 .PHONY: all all-am check check-TESTS check-am clean clean-generic \
-	cscopelist-am ctags-am distclean distclean-generic distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am recheck tags-am uninstall uninstall-am
+	clean-libtool cscopelist-am ctags-am distclean \
+	distclean-generic distclean-libtool distdir dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am recheck tags-am \
+	uninstall uninstall-am
 
 .PRECIOUS: Makefile
 

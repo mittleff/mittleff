@@ -19,7 +19,7 @@
 # along with guile-hello. If not, see https://www.gnu.org/licenses/.
 #
 
-SUBDIRS = mittleff tests
+SUBDIRS = mittleff sf tests
 
 ACLOCAL_AMFLAGS = -I build-aux
 
