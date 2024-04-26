@@ -4,7 +4,7 @@
   #:export (erfc rgamma))
 
 (define libsf (load-foreign-library
-                  "build/libsf"
+                  "libsf"
                   #:global? #t))
 
 (define* (erfc x #:key (acc 1e-15))
