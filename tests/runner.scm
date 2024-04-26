@@ -1,49 +1,54 @@
-;; Test runner. Modified from guile-json:
+;;; (tests runner) --- Runner for test suite
+
+;; Copyright (C) 2024 Victor Santos <victor_santos@fisica.ufc.br>
 ;;
-;;    https://github.com/aconchillo/guile-json
+;; This file is part of guile-hello.
+;;
+;; guile-hello is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3 of the License, or
+;; (at your option) any later version.
+;;
+;; guile-hello is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with guile-hello. If not, see https://www.gnu.org/licenses/.
+
+;;; Commentary:
+
+;; Test runner. This has been copied from GNU Cash.
+
+;;; Code:
 
 (define-module (tests runner)
   #:use-module (srfi srfi-64)
-  #:use-module (ice-9 popen)
-  #:use-module (ice-9 textual-ports)
-  #:export (mittleff:test-runner))
+  #:export (hello:test-runner))
 
-(define (mittleff:test-runner)
-  (let ((runner (test-runner-null))
-        (logging-port #f))
-    (test-runner-on-group-begin! runner
-      (lambda (runner suite-name count)
-        (format #t "# Testing ~a... " suite-name)
-        (set! logging-port (open-file (format #f "~a.log" suite-name) "w"))
-        (test-runner-aux-value! runner 1)))
-    (test-runner-on-group-end! runner
-      (lambda (runner)
-        (close logging-port)
-        (format #t "Done.\n")))
+(define (hello:test-runner)
+  (let ((runner (test-runner-null)))
     (test-runner-on-test-end! runner
       (lambda (runner)
-        (when (eqv? 'fail (test-result-kind runner))
-          (format logging-port "[~06d] ~a ~a\n"
-                  (test-runner-aux-value runner)
-                  (test-result-ref runner 'result-kind)
-                  (test-runner-test-name runner))
-          (force-output logging-port))        
-        (test-runner-aux-value! runner (1+ (test-runner-aux-value runner)))
+        (format #t "[~a] line:~a, test: ~a\n"
+                (test-result-ref runner 'result-kind)
+                (test-result-ref runner 'source-line)
+                (test-runner-test-name runner))
         (case (test-result-kind runner)
           ((fail xfail)
            (if (test-result-ref runner 'expected-value)
-               (format #t "~a\n -> expected: ~a\n -> obtained: ~a\n"
+               (format #t "~a\n -> expected: ~s\n -> obtained: ~s\n"
                        (string-join (test-runner-group-path runner) "/")
                        (test-result-ref runner 'expected-value)
                        (test-result-ref runner 'actual-value))))
           (else #t))))
     (test-runner-on-final! runner
-      (lambda (runner)        
-        (format #t "pass = ~a, fail = ~a, score = ~1,1f%\n\n"
+      (lambda (runner)
+        (format #t "Source:~a\npass = ~a, fail = ~a\n"
+                (test-result-ref runner 'source-file)
                 (test-runner-pass-count runner)
-                (test-runner-fail-count runner)
-                (exact->inexact
-                 (* 100 (/ (test-runner-pass-count runner)
-                           (+ (test-runner-pass-count runner)
-                              (test-runner-fail-count runner))))))))
+                (test-runner-fail-count runner))))
     runner))
+
+;;; (tests runner) ends here
