@@ -1,6 +1,18 @@
 (define-module (mittleff quad)
   #:use-module (mittleff constants)
+  #:use-module (system foreign)
+  #:use-module (system foreign-library)
   #:export (quad))
+
+(define libquad (load-foreign-library
+                "libquad"
+                #:global? #t))
+
+(define* (quad-gsl f a b #:optional (acc 1e-15))
+  (let* ((c-quad
+          (pointer->procedure
+           double (dynamic-func "quad" libquad) `(* ,double ,double ,double))))
+    (c-quad (procedure->pointer double (lambda (x y) (f x)) `(,double *)) a b acc)))
 
 ;; https://rosettacode.org/wiki/Numerical_integration/Adaptive_Simpson%27s_method#Scheme
 (define (quad-asr f a b tol depth)
@@ -46,7 +58,8 @@
           (%%quad-asr a fa b fb tol whole m fm depth))))))
 
 (define* (quad fn a b #:key (acc *default-precision*) (depth 10000))
-  (let ((integration-procedure quad-asr))
-    (let ((x (integration-procedure (lambda (x) (real-part (fn x))) a b acc depth))
-          (y (integration-procedure (lambda (x) (imag-part (fn x))) a b acc depth)))
+  (let (;;(integration-procedure quad-asr)
+        (integration-procedure quad-gsl))
+    (let ((x (integration-procedure (lambda (x) (real-part (fn x))) a b acc))
+          (y (integration-procedure (lambda (x) (imag-part (fn x))) a b acc)))
       (make-rectangular x y))))
