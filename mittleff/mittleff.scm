@@ -18,24 +18,28 @@
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
           ;; Apply the Recursion Relation ;;
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-          (let* ((m (1+ (ceiling (/ (- alpha 1) 2))))
-                 (one-over-2mp1 (/ 1 (1+ (* 2 m))))
-                 (a (* alpha one-over-2mp1)))
-            (* one-over-2mp1
-               (sum
-                (lambda (l)
-                  (let ((zz (* (expt z one-over-2mp1) (exp (* 2 pi J l one-over-2mp1)))))
-                    (mittleff-aux a beta zz #:acc acc #:radius radius)))
-                from (- m) to m)))
+          (recursion alpha beta z #:acc acc)
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
           ;; Apply the main algorithm for alpha <= 1 ;;
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-          (mittleff-aux alpha beta z #:acc acc #:radius radius))))
+          (mittleff-aux alpha beta z #:acc acc))))
 
-(define* (mittleff-aux alpha beta z #:key (acc *default-precision*) (radius *taylor-radius*))
+(define* (mittleff-aux alpha beta z #:key (acc *default-precision*))
   (let ((r1 (compute-r1 alpha #:acc acc)))
     (if (>= (magnitude z) r1)
         ;; 1-4
         (asymptotics alpha beta z #:acc acc)
         ;; 5-6
         (integral-rep alpha beta z #:acc acc))))
+
+(define* (recursion alpha beta z #:key (acc *default-precision*))
+  (let* ((m (1+ (ceiling (/ (- alpha 1) 2))))
+         (one-over-2mp1 (/ 1 (1+ (* 2 m))))
+         (a (* alpha one-over-2mp1)))
+    (* one-over-2mp1
+       (sum
+        (lambda (l)
+          (let ((zz (* (expt z one-over-2mp1) (exp (* 2 pi J l one-over-2mp1)))))
+            (mittleff-aux a beta zz #:acc acc)))
+        from (- m) to m))))
+
