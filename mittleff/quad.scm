@@ -14,6 +14,12 @@
            double (dynamic-func "quad" libquad) `(* ,double ,double ,double))))
     (c-quad (procedure->pointer double (lambda (x y) (f x)) `(,double *)) a b acc)))
 
+(define* (quad-flint f a b #:optional (acc 1e-15))
+  (let* ((c-quad
+          (pointer->procedure
+           double (dynamic-func "quad_flint" libquad) `(* ,double ,double ,double))))
+    (c-quad (procedure->pointer double (lambda (x y) (f x)) `(,double *)) a b acc)))
+
 ;; https://rosettacode.org/wiki/Numerical_integration/Adaptive_Simpson%27s_method#Scheme
 (define (quad-asr f a b tol depth)
   (letrec ;; Recursive let, so %%quad-asr can call itself.
@@ -59,7 +65,7 @@
 
 (define* (quad fn a b #:key (acc *default-precision*) (depth 10000))
   (let (;;(integration-procedure quad-asr)
-        (integration-procedure quad-gsl))
+        (integration-procedure quad-flint))
     (let ((x (integration-procedure (lambda (x) (real-part (fn x))) a b acc))
           (y (integration-procedure (lambda (x) (imag-part (fn x))) a b acc)))
       (make-rectangular x y))))
