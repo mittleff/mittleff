@@ -41,3 +41,6 @@ test-mittleff: shared
 
 test-recursion: shared
 	time LD_LIBRARY_PATH=build/ GUILE_LOAD_PATH=./ guile -s tests/test-recursion.scm
+
+test-quad: shared
+	time LD_LIBRARY_PATH=build/ GUILE_LOAD_PATH=./ guile -s tests/test-quad.scm
