@@ -2,7 +2,7 @@
   #:use-module (mittleff constants)
   #:use-module (system foreign)
   #:use-module (system foreign-library)
-  #:export (quad))
+  #:export (quad quad-aux))
 
 (define libquad (load-foreign-library
                 "libquad"
@@ -12,6 +12,12 @@
   (let* ((c-quad
           (pointer->procedure
            double (dynamic-func "quad" libquad) `(* ,double ,double ,double))))
+    (c-quad (procedure->pointer double (lambda (x y) (f x)) `(,double *)) a b acc)))
+
+(define* (quad-flint f a b #:optional (acc 1e-15))
+  (let* ((c-quad
+          (pointer->procedure
+           double (dynamic-func "quad_flint" libquad) `(* ,double ,double ,double))))
     (c-quad (procedure->pointer double (lambda (x y) (f x)) `(,double *)) a b acc)))
 
 ;; https://rosettacode.org/wiki/Numerical_integration/Adaptive_Simpson%27s_method#Scheme
@@ -56,6 +62,9 @@
       (call-with-values (lambda () (%%quad-asr-simpsons a fa b fb))
         (lambda (m fm whole)
           (%%quad-asr a fa b fb tol whole m fm depth))))))
+
+(define* (quad-aux fn a b #:key (acc *default-precision*))
+  (quad-flint fn a b acc))
 
 (define* (quad fn a b #:key (acc *default-precision*) (depth 10000))
   (let (;;(integration-procedure quad-asr)

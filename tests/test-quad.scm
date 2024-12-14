@@ -11,7 +11,8 @@
 
 (test-runner-factory mittleff:test-runner)
 
-(let* ((fn (vector (lambda (x) (sin x))))
+(let* ((fn (vector (lambda (x) (begin ;; (display x) (newline)
+                                      (sin x)))))
        (project-directory (getcwd))
        (tcases-directory (format #f "~a/tests/tcases/quad/" project-directory))
        (fst (file-system-tree tcases-directory))
@@ -31,7 +32,7 @@
                  (expected (fourth v)))
             (test-approx (format #f "[~a] I_~a = ~a" fname idx expected)
                          expected
-                         (quad (vector-ref fn (- idx 1)) a b)))))
+                         (quad-aux (vector-ref fn (- idx 1)) a b)))))
        (test-end test-group-name)
        (system* "find" "." "-iname"
                 (format #f "~a.log" test-group-name)

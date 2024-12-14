@@ -12,6 +12,10 @@
             asymptotics
             integral-rep))
 
+(define libintegrate (load-foreign-library
+                  "libintegrate"
+                  #:global? #t))
+
 (define* (series a b z #:key (acc *default-precision*) (asymptotic? #f))
   (let* ((kmin (if asymptotic? 1 0))
          (kmax (if asymptotic?
@@ -60,8 +64,18 @@
         (fac3 (exp (expt z (/ a)))))
     (- (* fac1 fac2 fac3) (series a b z #:acc acc #:asymptotic? #t))))
 
+;; (define (fn-a z a b x)
+;;   (* (/ a) (expt z (/ (- 1 b) a)) (exp (* (expt z (/ a)) (cos (/ x a))))))
+
 (define (fn-a z a b x)
-  (* (/ a) (expt z (/ (- 1 b) a)) (exp (* (expt z (/ a)) (cos (/ x a))))))
+  (let* ((prec 53)
+         (c-wrap-a
+          (pointer->procedure
+           complex-double
+           (dynamic-func "wrap_a" libintegrate)
+           `(,complex-double ,complex-double ,complex-double ,complex-double ,int))))
+    (c-wrap-a z a b x prec)
+    ))
 
 (define (omega x y a b)
   (+ (* (expt x (/ a)) (sin (/ y a))) (* y (+ 1 (/ (- 1 b) a)))))

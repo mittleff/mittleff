@@ -1,14 +1,19 @@
 SHELL := /bin/bash
 CC=gcc
-CFLAGS=-Wall -Werror $$(gsl-config --cflags)
-LDFLAGS=-lm -lflint $$(gsl-config --libs)
+CFLAGS=-std=c99 -Wall $$(gsl-config --cflags)
+LDFLAGS=-lm 	-lflint $$(gsl-config --libs)
 
-shared: build/libquad.so build/librgamma.so build/liberfc.so
+shared: build/libquad.so build/librgamma.so build/liberfc.so build/libintegrate.so
 
 build/libquad.so: src/quad.c
 	mkdir -p build
 	$(CC) $(CFLAGS) -c src/quad.c -o src/quad.o
 	$(CC) $(CFLAGS) -fPIC -shared src/quad.o -o build/libquad.so $(LDFLAGS)
+
+build/libintegrate.so: src/integrate.c
+	mkdir -p build
+	$(CC) $(CFLAGS) -c src/integrate.c -o src/integrate.o
+	$(CC) $(CFLAGS) -fPIC -shared src/integrate.o -o build/libintegrate.so $(LDFLAGS)
 
 build/librgamma.so: src/arbtod.c src/ml_rgamma.c
 	mkdir -p build
