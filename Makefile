@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-CC=gcc
+CC=gcc -fdiagnostics-color=always
 CFLAGS=-std=c99 -Wall $$(gsl-config --cflags)
 LDFLAGS=-lm 	-lflint $$(gsl-config --libs)
 

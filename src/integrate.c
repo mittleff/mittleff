@@ -11,6 +11,7 @@ typedef struct {
     acb_t c;
 } integ_params_t;
 
+// Compute eq. (4.30)
 void
 omega (acb_t res,
        const acb_t x,
@@ -27,11 +28,11 @@ omega (acb_t res,
     acb_init(f2);
     
     //////////////////////////////////////////////////////
-    // f1 = t1 * t2, where t1 = exp(x/a), t2 = sin(y/a) //
+    // f1 = t1 * t2, where t1 = x**(1/a), t2 = sin(y/a) //
     //////////////////////////////////////////////////////
-    // Compute t1 = exp(x/a)
-    acb_div(t1, x, a, prec);
-    acb_exp(t1, t1, prec);
+    // Compute t1 = x**(1/a)
+    acb_inv(t1, a, prec);
+    acb_pow(t1, x, t1, prec);
     // Compute t2 = sin(y/a)
     acb_div(t2, y, a, prec);
     acb_sin(t2, t2, prec);
@@ -39,7 +40,8 @@ omega (acb_t res,
     acb_mul(f1, t1, t2, prec);
 
     // f2 = y * t2, where t2 = 1 + (1 - b)/a
-    acb_one(t1); acb_one(t2);
+    acb_one(t1);
+    acb_one(t2);
     acb_sub(t2, t2, b, prec);
     acb_div(t2, t2, a, prec);
     acb_add(t2, t1, t2, prec);
@@ -83,8 +85,7 @@ A (acb_t res,
 
     // f3 = exp(t1 * t2), where t1 = z ** (1/a), t2 = cos(x/a)
     // Compute t1 = z ** (1/a)
-    acb_one(t1);
-    acb_div(t1, t1, a, prec);
+    acb_inv(t1, a, prec);
     acb_pow(t1, z, t1, prec);
     // Compute t2 = cos(x/a)
     acb_div(t2, x, a, prec);
@@ -102,6 +103,74 @@ A (acb_t res,
     acb_clear(f3);
     acb_clear(t1);
     acb_clear(t2);    
+}
+
+void
+B (acb_t res,
+   const acb_t r,
+   const acb_t a,
+   const acb_t b,
+   const acb_t z,
+   const acb_t phi,
+   slong prec)
+{
+    acb_t f1, f2, f3, t1, t2, t3, w, x, y;
+
+    acb_init(w);
+    acb_init(x);
+    acb_init(y);
+    acb_init(f1);
+    acb_init(f2);
+    acb_init(f3);
+    acb_init(t1);
+    acb_init(t2);
+    acb_init(t3);
+
+    omega(w, r, phi, a, b, prec);
+
+    // f1 = 1/pi
+    acb_const_pi(f1, prec);
+    acb_inv(f1, f1, prec);
+
+    // f2 = A(r, a, b, phi);
+    A(f2, r, a, b, phi, prec);
+
+    // f3 = t1 / t2,
+    // where
+    //     t1 = r * sin(w - phi) - z * sin(w),
+    //     t2 = r**2 - 2 * r * z * cos(phi) + z**2
+    // Compute t1
+    acb_sub(t3, w, phi, prec);
+    acb_sin(t1, t3, prec);
+    acb_mul(t1, t1, r, prec);
+    acb_sin(t3, w, prec);
+    acb_mul(t3, t3, z, prec);
+    acb_sub(t1, t1, t3, prec);
+    // Compute t2
+    acb_cos(t3, phi, prec);
+    acb_mul(t3, t3, z, prec);
+    acb_mul(t3, t3, r, prec);
+    acb_mul_si(t3, t3, -2, prec);    
+    acb_mul(t2, r, r, prec);
+    acb_add(t2, t2, t3, prec);
+    acb_mul(t3, z, z, prec);
+    acb_add(t2, t2, t3, prec);
+    // Compute f3
+    acb_div(f3, t1, t2, prec);
+
+    // res = f1 * f2 * f3
+    acb_mul(res, f1, f2, prec);
+    acb_mul(res, res, f3, prec);
+
+    acb_clear(w);
+    acb_clear(x);
+    acb_clear(y);
+    acb_clear(f1);
+    acb_clear(f2);
+    acb_clear(f3);
+    acb_clear(t1);
+    acb_clear(t2);
+    acb_clear(t3);    
 }
 
 double complex wrap_a (double complex z,
@@ -131,7 +200,43 @@ double complex wrap_a (double complex z,
     return res;
 }
 
+double complex wrap_b (double complex r,
+                       double complex a,
+                       double complex b,
+                       double complex z,
+                       double complex phi,
+                       int prec)
+{
+    double complex res;
+    acb_t _res;
+    acb_t zz, aa, bb, rr, pphi;
 
+    acb_init(_res);
+    acb_init(rr);
+    acb_init(aa);
+    acb_init(bb);
+    acb_init(zz);
+    acb_init(pphi);
+
+    acb_set_d_d(rr, creal(r), cimag(r));
+    acb_set_d_d(aa, creal(a), cimag(a));
+    acb_set_d_d(bb, creal(b), cimag(b));
+    acb_set_d_d(zz, creal(z), cimag(z));
+    acb_set_d_d(pphi, creal(phi), cimag(phi));
+
+    B(_res, rr, aa, bb, zz, pphi, (slong)prec);
+    res = arf_get_d(arb_midref(acb_realref(_res)), ARF_RND_NEAR) + I * arf_get_d(arb_midref(acb_imagref(_res)), ARF_RND_NEAR);
+
+    acb_clear(_res);
+    acb_clear(rr);
+    acb_clear(aa);
+    acb_clear(bb);
+    acb_clear(zz);
+    acb_clear(pphi);
+
+    return res;
+}
+   
 static int
 fnB (acb_ptr res, const acb_t r, void * param, slong order, slong prec)
 {
@@ -202,6 +307,44 @@ fnB (acb_ptr res, const acb_t r, void * param, slong order, slong prec)
     
     return 0;
 }
+
+/* double complex */
+/* wrap_b (double complex r, */
+/*         double complex a, */
+/*         double complex b, */
+/*         double complex z, */
+/*         double complex phi, */
+/*         int prec) */
+/* { */
+/*     double complex res; */
+/*     int status; */
+/*     acb_t _res, rr; */
+/*     integ_params_t par; */
+
+/*     acb_init(rr); */
+/*     acb_init(par.a); */
+/*     acb_init(par.b); */
+/*     acb_init(par.z); */
+/*     acb_init(par.c); */
+
+/*     acb_set_d_d(rr, creal(r), cimag(r)); */
+/*     acb_set_d_d(par.a, creal(a), cimag(a)); */
+/*     acb_set_d_d(par.b, creal(b), cimag(b)); */
+/*     acb_set_d_d(par.z, creal(z), cimag(z)); */
+/*     acb_set_d_d(par.c, creal(phi), cimag(phi)); */
+
+/*     status = fnB (_res, rr, &par, 0, (slong)prec); */
+/*     res = arf_get_d(arb_midref(acb_realref(_res)), ARF_RND_NEAR) + I * arf_get_d(arb_midref(acb_imagref(_res)), ARF_RND_NEAR); */
+
+/*     acb_clear(rr); */
+/*     acb_clear(_res); */
+/*     acb_clear(par.a); */
+/*     acb_clear(par.b); */
+/*     acb_clear(par.z); */
+/*     acb_clear(par.c); */
+    
+/*     return res; */
+/* } */
 
 static int
 fnC (acb_ptr res, const acb_t ph, void * param, slong order, slong prec)

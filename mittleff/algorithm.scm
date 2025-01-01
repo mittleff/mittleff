@@ -80,10 +80,18 @@
 (define (omega x y a b)
   (+ (* (expt x (/ a)) (sin (/ y a))) (* y (+ 1 (/ (- 1 b) a)))))
 
+;; (define (fn-b r a b z phi)
+;;   (let ((w (omega r phi a b)))
+;;     (* (/ pi) (fn-a r a b phi) (/ (- (* r (sin (- w phi))) (* z (sin w)))
+;;                                   (+ (expt r 2) (* -2 r z (cos phi)) (expt z 2))))))
 (define (fn-b r a b z phi)
-  (let ((w (omega r phi a b)))
-    (* (/ pi) (fn-a r a b phi) (/ (- (* r (sin (- w phi))) (* z (sin w)))
-                                  (+ (expt r 2) (* -2 r z (cos phi)) (expt z 2))))))
+  (let* ((prec 53)
+         (c-wrap-b
+          (pointer->procedure
+           complex-double
+           (dynamic-func "wrap_b" libintegrate)
+           `(,complex-double ,complex-double ,complex-double ,complex-double ,complex-double ,int))))
+    (c-wrap-b r a b z phi prec)))
 
 (define (fn-c ph a b z rho)
   (let ((w (omega rho ph a b)))
