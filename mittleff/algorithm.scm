@@ -94,8 +94,17 @@
     (c-wrap-b r a b z phi prec)))
 
 (define (fn-c ph a b z rho)
-  (let ((w (omega rho ph a b)))
-    (* (/ rho (* 2 pi)) (fn-a rho a b ph) (/ (exp (* J w)) (- (* rho (exp (* J ph))) z)))))
+  (let* ((prec 53)
+         (c-wrap-c
+          (pointer->procedure
+           complex-double
+           (dynamic-func "wrap_c" libintegrate)
+           `(,complex-double ,complex-double ,complex-double ,complex-double ,complex-double ,int))))
+    (c-wrap-c ph a b z rho prec)))
+
+;; (define (fn-c ph a b z rho)
+;;   (let ((w (omega rho ph a b)))
+;;     (* (/ rho (* 2 pi)) (fn-a rho a b ph) (/ (exp (* J w)) (- (* rho (exp (* J ph))) z)))))
 
 (define* (integral-rep a b z  #:key (region 5) (acc *default-precision*) (radius *taylor-radius*))
   (integral-rep-aux a b z #:region

@@ -173,6 +173,62 @@ B (acb_t res,
     acb_clear(t3);    
 }
 
+void
+C (acb_ptr res,
+   const acb_t phi,
+   const acb_t a,
+   const acb_t b,
+   const acb_t z,
+   const acb_t rho,
+   slong prec)
+{
+    acb_t w, f1, f2, f3, t1, t2, t3;
+
+    acb_init(w);
+    acb_init(t1);
+    acb_init(t2);
+    acb_init(t3);
+    acb_init(f1);
+    acb_init(f2);
+    acb_init(f3);
+
+    omega(w, rho, phi, a, b, prec);
+
+    // Compute f1 = rho/(2 * pi)
+    acb_const_pi(t2, prec);
+    acb_mul_si(t2, t2, 2, prec);
+    acb_div(f1, rho, t2, prec);
+    
+    // Compute f2 = A(rho, a, b, ph);
+    A(f2, rho, a, b, phi, prec);
+    
+    // Compute f3 = t1 / t2,
+    // t1 = exp(I * w)
+    acb_onei(t1);
+    acb_mul(t1, t1, w, prec);
+    acb_exp(t1, t1, prec);
+    // t2 = rho * exp(I * ph) - z
+    acb_onei(t2);
+    acb_mul(t2, t2, phi, prec);
+    acb_exp(t2, t2, prec);
+    acb_mul(t2, t2, rho, prec);
+    acb_sub(t2, t2, z, prec);
+    // compute f3
+    acb_div(f3, t1, t2, prec);
+
+    // res = f1 * f2 * f3
+    acb_mul(res, f1, f2, prec);
+    acb_mul(res, res, f3, prec);
+
+    acb_clear(w);
+    acb_clear(t1);
+    acb_clear(t2);
+    acb_clear(t3);
+    acb_clear(f1);
+    acb_clear(f2);
+    acb_clear(f3);
+}
+
 double complex wrap_a (double complex z,
         double complex a,
         double complex b,
@@ -234,6 +290,43 @@ double complex wrap_b (double complex r,
     acb_clear(zz);
     acb_clear(pphi);
 
+    return res;
+}
+
+double complex wrap_c (double complex phi,
+                       double complex a,
+                       double complex b,
+                       double complex z,
+                       double complex rho,
+                       int prec)
+{
+    double complex res;
+    acb_t _res;
+    acb_t pphi, aa, bb, zz, rrho;
+
+    acb_init(_res);
+    acb_init(pphi);
+    acb_init(aa);
+    acb_init(bb);
+    acb_init(zz);
+    acb_init(rrho);
+
+    acb_set_d_d(pphi, creal(phi), cimag(phi));
+    acb_set_d_d(aa, creal(a), cimag(a));
+    acb_set_d_d(bb, creal(b), cimag(b));
+    acb_set_d_d(zz, creal(z), cimag(z));
+    acb_set_d_d(rrho, creal(rho), cimag(rho));
+
+    C(_res, pphi, aa, bb, zz, rrho, (slong)prec);
+    res = arf_get_d(arb_midref(acb_realref(_res)), ARF_RND_NEAR) + I * arf_get_d(arb_midref(acb_imagref(_res)), ARF_RND_NEAR);
+
+    acb_clear(_res);
+    acb_clear(pphi);
+    acb_clear(aa);
+    acb_clear(bb);
+    acb_clear(zz);
+    acb_clear(rrho);
+    
     return res;
 }
    
