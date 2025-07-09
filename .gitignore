@@ -1,0 +1,7 @@
+*.o
+*.log
+*.so
+.ipynb_checkpoints
+trash/
+tmp/
+.env
