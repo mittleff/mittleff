@@ -10,7 +10,7 @@
 ;; Taylor series upper limit
 (define *taylor-radius* 0.95)
 ;; Default precision
-(define *default-precision* 1.0e-15)
+(define *default-precision* 53)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mathematical constants ;;

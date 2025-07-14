@@ -9,22 +9,6 @@
 
 (test-runner-factory mittleff:test-runner)
 
-(define* (region z a #:key (acc 1e-15) (radius 0.95))
-  (if (<= (magnitude z) radius)
-      0
-      (let ((r1 (compute-r1 a #:acc acc)))
-        (if (>= (magnitude z) r1)
-            ;; 1-4
-            (cond
-             ((in-region-G1? z a #:acc acc #:radius radius) 1)
-             ((in-region-G2? z a #:acc acc #:radius radius) 2)
-             ((in-region-G3? z a #:acc acc #:radius radius) 3)
-             ((in-region-G4? z a #:acc acc #:radius radius) 4))
-            ;; 5-6
-            (cond
-             ((in-region-G5? z a #:acc acc #:radius radius) 5)
-             ((in-region-G6? z a #:acc acc #:radius radius) 6))))))
-
 (let* ((project-directory (getcwd))
        (tcases-directory (format #f "~a/tests/tcases/partition/" project-directory))
        (fst (file-system-tree tcases-directory))
@@ -44,11 +28,11 @@
                  (y (fourth v))
                  (reg (fifth v))                 
                  (z (make-rectangular x y))
-                 (eps 1e-15))            
+                 (prec 48))            
             (test-assert
                 (format #f "[~a] ~4,8,2@e~4,8,2@ei in G~d"
                         fname (real-part z) (imag-part z) reg)
-              (= reg (region z a #:acc eps #:radius r0))))))
+              (= reg (region? z a #:prec prec #:taylor-radius r0))))))
        (test-end test-group-name)
        (system* "find" "." "-iname"
                 (format #f "~a.log" test-group-name)

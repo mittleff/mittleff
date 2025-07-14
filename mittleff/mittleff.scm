@@ -8,12 +8,12 @@
 ;;;;;;;;;;;;;;;;;;;
 ;; Main function ;;
 ;;;;;;;;;;;;;;;;;;;
-(define* (mittleff alpha beta z #:key (acc *default-precision*) (radius *taylor-radius*))
+(define* (mittleff alpha beta z #:key (prec *default-precision*) (radius *taylor-radius*))
   (if (<= (magnitude z) radius)
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ;; Evaluate the Taylor Series ;;
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-      (taylor alpha beta z #:acc acc)
+      (taylor alpha beta z #:prec prec)
       (if (> alpha 1)
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
           ;; Apply the Recursion Relation ;;
@@ -25,17 +25,17 @@
                (sum
                 (lambda (l)
                   (let ((zz (* (expt z one-over-2mp1) (exp (* 2 pi J l one-over-2mp1)))))
-                    (mittleff-aux a beta zz #:acc acc #:radius radius)))
+                    (mittleff-aux a beta zz #:prec prec #:radius radius)))
                 from (- m) to m)))
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
           ;; Apply the main algorithm for alpha <= 1 ;;
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-          (mittleff-aux alpha beta z #:acc acc #:radius radius))))
+          (mittleff-aux alpha beta z #:prec prec #:radius radius))))
 
-(define* (mittleff-aux alpha beta z #:key (acc *default-precision*) (radius *taylor-radius*))
-  (let ((r1 (compute-r1 alpha #:acc acc)))
+(define* (mittleff-aux alpha beta z #:key (prec *default-precision*) (radius *taylor-radius*))
+  (let ((r1 (compute-r1 alpha #:prec prec)))
     (if (>= (magnitude z) r1)
         ;; 1-4
-        (asymptotics alpha beta z #:acc acc)
+        (asymptotics alpha beta z #:prec prec)
         ;; 5-6
-        (integral-rep alpha beta z #:acc acc))))
+        (integral-rep alpha beta z #:prec prec))))

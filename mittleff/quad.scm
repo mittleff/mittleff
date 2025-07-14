@@ -1,5 +1,6 @@
 (define-module (mittleff quad)
   #:use-module (mittleff constants)
+  #:use-module (mittleff utils)
   #:export (quad))
 
 ;; https://rosettacode.org/wiki/Numerical_integration/Adaptive_Simpson%27s_method#Scheme
@@ -45,8 +46,9 @@
         (lambda (m fm whole)
           (%%quad-asr a fa b fb tol whole m fm depth))))))
 
-(define* (quad fn a b #:key (acc *default-precision*) (depth 10000))
-  (let ((integration-procedure quad-asr))
+(define* (quad fn a b #:key (prec *default-precision*) (depth 10000))
+  (let ((acc (accuracy-from-prec prec))
+        (integration-procedure quad-asr))
     (let ((x (integration-procedure (lambda (x) (real-part (fn x))) a b acc depth))
           (y (integration-procedure (lambda (x) (imag-part (fn x))) a b acc depth)))
       (make-rectangular x y))))

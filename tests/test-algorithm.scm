@@ -32,18 +32,18 @@
                  (yy (seventh v))
                  (region (eighth v))
                  (z (make-rectangular x y))
-                 (acc 1e-15)
+                 (prec 49)
                  (expected (make-rectangular xx yy)))            
             (test-approx (format #f "[~a] (G~a), R0=~a ML(~a, ~a, ~4,8,3@e~4,8,3@ei) == ~4,8,3@e~4,8,3@ei"
                                  fname region r0 a b (real-part z) (imag-part z) (real-part expected) (imag-part expected))
                          expected
                          (let ((fn (cond
-                                    ((= 0 region) (lambda (a b z eps) (taylor a b z #:acc acc)))
+                                    ((= 0 region) (lambda (a b z eps) (taylor a b z #:prec prec)))
                                     ((or (= 1 region) (= 2 region) (= 3 region) (= 4 region))
-                                     (lambda (a b z eps) (asymptotics a b z #:acc eps)))
+                                     (lambda (a b z eps) (asymptotics a b z #:prec prec)))
                                     ((or (= 5 region) (= 6 region))
-                                     (lambda (a b z eps) (integral-rep a b z #:acc eps))))))
-                           (fn a b z acc))))))
+                                     (lambda (a b z eps) (integral-rep a b z #:prec prec))))))
+                           (fn a b z prec))))))
        (test-end test-group-name)
        (system* "find" "." "-iname"
                 (format #f "~a.log" test-group-name)

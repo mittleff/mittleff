@@ -34,7 +34,7 @@
             (test-approx (format #f "[~a] ML(~a, ~a, ~4,8,3@e~4,8,3@ei) == ~4,8,3@e~4,8,3@ei"
                                  fname a b (real-part z) (imag-part z)
                                  (real-part expected) (imag-part expected))
-                         expected (mittleff a b z #:acc 1e-15)))))
+                         expected (mittleff a b z #:prec 49)))))
        (test-end test-group-name)
        (system* "find" "." "-iname"
                 (format #f "~a.log" test-group-name)
