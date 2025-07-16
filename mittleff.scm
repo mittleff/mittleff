@@ -10,6 +10,6 @@
        (x (third args))
        (y (fourth args))
        (z (make-rectangular x y))
-       (eps 1.0e-15))
-  (display (mittleff a b z #:acc eps))
+       (prec 49))
+  (display (mittleff a b z #:prec prec))
   (newline))
